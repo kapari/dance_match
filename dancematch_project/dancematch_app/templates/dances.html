@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+{% if all_dances %}
+    <ul>
+    {% for dance in all_dances %}
+        <li><a href="{{ dance.id }}/">{{ dance.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No dances are available.</p>
+{% endif %}
+
+{% endblock %}

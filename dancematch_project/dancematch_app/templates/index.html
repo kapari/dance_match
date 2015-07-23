@@ -1,0 +1,29 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+{% if all_dancers %}
+    <ul class="list">
+    {% for dancer in all_dancers %}
+        <li>
+            <a href="/profile/{{ dancer.id }}/">{{ dancer.name }}</a>
+        </li>
+        <li>
+            <ul>
+                {% for pref in all_prefs %}
+                    {% if pref.dancer.id == dancer.id %}
+                    <li>
+                        {{ pref.dance }} {{ pref.role }}
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No dancers are available.</p>
+{% endif %}
+
+{% endblock %}

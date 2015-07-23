@@ -1,0 +1,51 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<h1>{{ dancer.name }}</h1>
+
+{% if dancer.active_member %}
+    {{ dancer.name }} is looking for a buddy!
+{% else %}
+    {{ dancer.name }} is not currently looking for a buddy.
+{% endif %}
+
+<div class="bio">
+    {{ dancer.bio }}
+</div>
+<div class="contact">
+    {{ dancer.email }}
+</div>
+
+<br>
+<a href="/edit/{{ dancer.id }}">Edit</a>
+
+<h2>{{ dancer.name }}'s Dances</h2>
+
+<a href="/edit/{{ dancer.id }}/0/">Add a new dance</a>
+
+{% for dance_pref in dance_prefs %}
+    <h3>{{ dance_pref.dance }}: {{ dance_pref.role }}</h3>
+    <ul class="prefs">
+        {% if dance_pref.activity %}
+            <li>Status: {{ dance_pref.activity }}</li>
+        {% endif %}
+        {% if dance_pref.skill_level %}
+            <li>Self-assessment: {{ dance_pref.skill_level }}</li>
+        {% endif %}
+        {%  if dance_pref.goal %}
+            <li>Goal: {{ dance_pref.goal }}</li>
+        {% endif %}
+        {% if dance_pref.notes != '' %}
+            <li>Notes: {{ dance_pref.notes }}</li>
+        {% endif %}
+    </ul>
+    <a href="/edit/{{ dancer.id }}/{{ dance_pref.id }}/">Edit</a>
+
+{% empty %}
+    {{ dancer.name }} has not added any dances.
+{% endfor %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+{% endblock %}
