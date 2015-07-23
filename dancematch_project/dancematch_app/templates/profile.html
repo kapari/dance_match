@@ -24,7 +24,7 @@
 
 <a href="/edit/{{ dancer.id }}/0/">Add a new dance</a>
 
-{% for dance_pref in dance_prefs %}
+{% for dance_pref in dance_prefs|dictsort:"dance.name" %}
     <h3>{{ dance_pref.dance }}: {{ dance_pref.role }}</h3>
     <ul class="prefs">
         {% if dance_pref.activity %}
