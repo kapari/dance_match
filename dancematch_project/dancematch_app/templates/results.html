@@ -5,7 +5,7 @@
 
 {% if all_prefs %}
     <ul class="list">
-    {% for pref in all_prefs|dictsort:"dance.name" %}
+    {% for pref in all_prefs|dictsort:"dancer.name" %}
         <li>
             <a href="/profile/{{ pref.dancer.id }}/">{{ pref.dancer.name }}</a>
            {{ pref.dance.name }} {{ pref.role.name }} ({{ pref.skill_level.name }})
@@ -15,5 +15,24 @@
 {% else %}
     <p>No dancers are available.</p>
 {% endif %}
+
+
+<!--{% regroup all_prefs by dance.name as all_prefs_list %}-->
+
+<!--<ul>-->
+    <!--{% for dance in all_prefs_list %}-->
+    <!--<li>-->
+        <!--{{ dance.grouper }}-->
+        <!--<ul>-->
+            <!--{% for item in dance.list %}-->
+            <!--<li>-->
+                <!--{{ item.dancer.name }}: {{ item.role }}-->
+            <!--</li>-->
+            <!--{% endfor %}-->
+        <!--</ul>-->
+    <!--</li>-->
+    <!--{% endfor %}-->
+<!--</ul>-->
+
 
 {% endblock %}

@@ -81,16 +81,19 @@ def edit_dance(request, dancer_id, dance_pref_id):
         dance_pref.role = role
 
         skill_level_id = request.POST.get("skill_level")
-        skill_level = get_object_or_404(SkillLevel, pk=skill_level_id)
-        dance_pref.skill_level = skill_level
+        if skill_level_id:
+            skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
+            dance_pref.skill_level = skill_level
 
         activity_id = request.POST.get("activity")
-        activity = get_object_or_404(Activity, pk=activity_id)
-        dance_pref.activity = activity
+        if activity_id:
+            activity = Activity.objects.filter(pk=activity_id)[0]
+            dance_pref.activity = activity
 
         goal_id = request.POST.get("goal")
-        goal = get_object_or_404(Goals, pk=goal_id)
-        dance_pref.goal = goal
+        if goal_id:
+            goal = Goals.objects.filter(pk=goal_id)[0]
+            dance_pref.goal = goal
 
         dance_pref.notes = request.POST["notes"]
 
@@ -113,3 +116,15 @@ def results(request):
     template = loader.get_template('results.html')
     context = RequestContext(request, {'all_prefs': all_prefs,})
     return HttpResponse(template.render(context))
+
+def api_dance_prefs(request):
+    dance_pref_list = DancePrefs.objects.all()
+    output = []
+    for pref in dance_pref_list:
+        prefdata = {}
+        prefdata["id"] = pref.id
+        prefdata["dancer"] = pref.dancer
+        prefdata["dance"] = pref.dance
+        output.append(prefdata)
+    json_data = json.dumps(output, indent=4)
+    return HttpResponse
