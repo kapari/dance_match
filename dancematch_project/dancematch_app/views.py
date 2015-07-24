@@ -107,3 +107,9 @@ def edit_dance(request, dancer_id, dance_pref_id):
                                                'goals': goals,
                                                'skill_levels': skill_levels,
                                                })
+
+def results(request):
+    all_prefs = DancePrefs.objects.all()
+    template = loader.get_template('results.html')
+    context = RequestContext(request, {'all_prefs': all_prefs,})
+    return HttpResponse(template.render(context))

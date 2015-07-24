@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+{% if all_prefs %}
+    <ul class="list">
+    {% for pref in all_prefs|dictsort:"dance.name" %}
+        <li>
+            <a href="/profile/{{ pref.dancer.id }}/">{{ pref.dancer.name }}</a>
+           {{ pref.dance.name }} {{ pref.role.name }} ({{ pref.skill_level.name }})
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No dancers are available.</p>
+{% endif %}
+
+{% endblock %}
