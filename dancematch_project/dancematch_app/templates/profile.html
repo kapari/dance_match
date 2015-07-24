@@ -39,6 +39,9 @@
         {% if dance_pref.notes != '' %}
             <li>Notes: {{ dance_pref.notes }}</li>
         {% endif %}
+        {% if dance_pref.activity.name != "Inactive" %}
+            <input class="button" type="button" value="Help with this goal"/>
+        {% endif %}
     </ul>
     <a href="/edit/{{ dancer.id }}/{{ dance_pref.id }}/">Edit</a>
 

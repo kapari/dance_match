@@ -92,6 +92,8 @@ def edit_dance(request, dancer_id, dance_pref_id):
         goal = get_object_or_404(Goals, pk=goal_id)
         dance_pref.goal = goal
 
+        dance_pref.notes = request.POST["notes"]
+
         dance_pref.dancer = dancer
         dance_pref.save()
 
