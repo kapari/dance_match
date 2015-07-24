@@ -30,4 +30,7 @@ urlpatterns = [
     # ex. /dances/
     url(r'^dances/', views.dances, name='dances'),
     url(r'^results/', views.results, name='results'),
+    url(r'^api_dance_prefs/', views.api_dance_prefs, name='api_dance_prefs'),
+    # ex. /profile/5/
+    url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),
 ]

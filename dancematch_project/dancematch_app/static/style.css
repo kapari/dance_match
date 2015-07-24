@@ -54,6 +54,10 @@ main {
     margin-bottom: 0em; /* size of footer */
 }
 
+.template {
+    display: none;
+}
+
 ul {
     list-style-type: none;
 }

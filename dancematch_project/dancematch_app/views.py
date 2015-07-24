@@ -111,11 +111,13 @@ def edit_dance(request, dancer_id, dance_pref_id):
                                                'skill_levels': skill_levels,
                                                })
 
+
 def results(request):
     all_prefs = DancePrefs.objects.all()
     template = loader.get_template('results.html')
-    context = RequestContext(request, {'all_prefs': all_prefs,})
+    context = RequestContext(request, {'all_prefs': all_prefs, })
     return HttpResponse(template.render(context))
+
 
 def api_dance_prefs(request):
     dance_pref_list = DancePrefs.objects.all()
@@ -123,8 +125,16 @@ def api_dance_prefs(request):
     for pref in dance_pref_list:
         prefdata = {}
         prefdata["id"] = pref.id
-        prefdata["dancer"] = pref.dancer
-        prefdata["dance"] = pref.dance
+        prefdata["dancer_id"] = pref.dancer.id
+        prefdata["dancer"] = pref.dancer.name
+        prefdata["dance_id"] = pref.dance.id
+        prefdata["dance"] = pref.dance.name
+        prefdata["role_id"] = pref.role.id
+        prefdata["role"] = pref.role.name
         output.append(prefdata)
     json_data = json.dumps(output, indent=4)
-    return HttpResponse
+    return HttpResponse(json_data, content_type='application/json')
+
+def profile_ajax(request):
+    template = loader.get_template('profile_ajax.html')
+    return HttpResponse(template.render())
