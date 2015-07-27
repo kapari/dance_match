@@ -6,20 +6,70 @@
 <script>
     document.write("test");
     // Draw Loaded Data
-    function draw(data) {
+
+    // TODO: get from new app status view
+    var user_id = 1;
+    var models = {};
+
+    function select_options(select, data, name_field, id_field, selected) {
+        for (var i = 0; i < data.length; i++) {
+            var option = document.createElement('option');
+            option.innerHTML = data[i][name_field];
+            option.setAttribute("value", data[i][id_field]);
+            if (data[i][name_field] == selected) {
+                option.setAttribute("selected", "selected");
+            }
+            select.appendChild(option);
+        }
+    }
+
+    function draw(data, dancer_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
-        for (var i = 0; i < data.length; i++) {
-            console.log(data[i].dance);
-            var clone = template.cloneNode(true);
-            clone.classList.remove("template");
-            clone.getElementsByClassName("dance")[0].innerHTML = data[i].dance;
-            clone.getElementsByClassName("role")[0].innerHTML = data[i].role;
 
-            pl.appendChild(clone);
+        for (var i = 0; i < data.length; i++) {
+            if (!dancer_id || data[i].dancer_id == dancer_id) {
+                var clone = template.cloneNode(true);
+                clone.classList.remove("template");
+                clone.getElementsByClassName("dancer")[0].innerHTML = data[i].dancer;
+                clone.getElementsByClassName("dance")[0].innerHTML = data[i].dance;
+                clone.getElementsByClassName("role")[0].innerHTML = data[i].role;
+                clone.getElementsByClassName("notes")[0].innerHTML = data[i].notes;
+
+                var selected_dance = data[i].dance;
+                select_options(clone.getElementsByClassName("dance_list")[0],
+                        window.models["dances"], "name", "id", selected_dance);
+
+                var selected_role = data[i].role;
+                select_options(clone.getElementsByClassName("role_list")[0],
+                        window.models["roles"], "name", "id", selected_role);
+
+                pl.appendChild(clone);
+            }
+
         }
 //        document.body.innerHTML = data
     }
+
+    function model_api(object_type) {
+        // get list of e.g. dances for dropdown
+        var url = "/api_" + object_type + "/";
+        var request = new XMLHttpRequest();
+        request.open("GET", url);
+
+        //For pre html5 browsers use onstatuschanged
+        request.onloadend = function (e) {
+            var json_string = e.currentTarget.responseText;
+            var data = JSON.parse(json_string);
+            window.models[object_type] = data;
+        };
+
+        request.send();
+    }
+
+    model_api("dances");
+    model_api("roles");
+
 
     // BEGIN WEB REST API CALL TO GET JSON DATA
     var url = "/api_dance_prefs/";
@@ -30,10 +80,25 @@
     request.onloadend = function (e) {
         var json_string = e.currentTarget.responseText;
         var data = JSON.parse(json_string);
-        draw(data);
+        draw(data, user_id);
     };
 
     request.send();
+
+
+    // get list of e.g. dances for dropdown
+//    var url = "/api_dances/";
+//    var request = new XMLHttpRequest();
+//    request.open("GET", url);
+//
+//    //For pre html5 browsers use onstatuschanged
+//    request.onloadend = function (e) {
+//        var json_string = e.currentTarget.responseText;
+//        var data = JSON.parse(json_string);
+//        window.dances = data;
+//    };
+//
+//    request.send();
 
 </script>
 
@@ -61,11 +126,20 @@
 <a href="/edit/{{ dancer.id }}/0/">Add a new dance</a>
 
 <div id="pref_list">
-    <div class="template">
-        <h3><span class="dance"></span>: <span class="role"></span></h3>
-        <ul class="pref">
-        </ul>
-    </div>
+    <ul class="pref list template">
+        <li class="selected">
+            <div class="read">
+                <span class="dance">Dance Style</span>: <span class="role">Role</span>
+                <span class="notes">Notes here.</span>
+                <span class="dancer">Dancer name</span>
+            </div>
+            <div class="edit">
+                <select class="dance_list">Dance Style</select>
+                <select class="role_list">Role</select>
+                <textarea class="notes_textarea">Notes here.</textarea>
+            </div>
+        </li>
+    </ul>
 </div>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}

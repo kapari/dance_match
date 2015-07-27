@@ -31,6 +31,9 @@ urlpatterns = [
     url(r'^dances/', views.dances, name='dances'),
     url(r'^results/', views.results, name='results'),
     url(r'^api_dance_prefs/', views.api_dance_prefs, name='api_dance_prefs'),
-    # ex. /profile/5/
+    url(r'^api_dances/', views.api_dances, name='api_dances'),
+    url(r'^api_roles/', views.api_roles, name='api_roles'),
+
+    # ex. /profile_ajax/
     url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),
 ]

@@ -131,9 +131,26 @@ def api_dance_prefs(request):
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id
         prefdata["role"] = pref.role.name
+        prefdata["notes"] = pref.notes
         output.append(prefdata)
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
+
+def api_dances(request):
+    dances = Dance.objects.order_by("name")
+    output = []
+    for dance in dances:
+        output.append({"name": dance.name, "id": dance.id})
+    return HttpResponse(json.dumps(output), content_type='application/json')
+
+
+def api_roles(request):
+    roles = DanceRole.objects.order_by("name")
+    output = []
+    for role in roles:
+        output.append({"name": role.name, "id": role.id})
+    return HttpResponse(json.dumps(output), content_type='application/json')
+
 
 def profile_ajax(request):
     template = loader.get_template('profile_ajax.html')
