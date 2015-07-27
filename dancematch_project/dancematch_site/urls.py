@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^api_dance_prefs/', views.api_dance_prefs, name='api_dance_prefs'),
     url(r'^api_dances/', views.api_dances, name='api_dances'),
     url(r'^api_roles/', views.api_roles, name='api_roles'),
+    url(r'^api_skill_levels/', views.api_skill_levels, name='api_skill_levels'),
 
     # ex. /profile_ajax/
     url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),

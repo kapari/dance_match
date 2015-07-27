@@ -131,6 +131,9 @@ def api_dance_prefs(request):
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id
         prefdata["role"] = pref.role.name
+        if pref.skill_level:
+            prefdata["skill_level_id"] = pref.skill_level.id
+            prefdata["skill_level"] = pref.skill_level.name
         prefdata["notes"] = pref.notes
         output.append(prefdata)
     json_data = json.dumps(output, indent=4)
@@ -149,6 +152,14 @@ def api_roles(request):
     output = []
     for role in roles:
         output.append({"name": role.name, "id": role.id})
+    return HttpResponse(json.dumps(output), content_type='application/json')
+
+
+def api_skill_levels(request):
+    skill_levels = SkillLevel.objects.all()
+    output = []
+    for level in skill_levels:
+        output.append({"name": level.name, "id": level.id})
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 

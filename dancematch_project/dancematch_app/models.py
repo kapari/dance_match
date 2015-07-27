@@ -1,7 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Dancer(models.Model):
+    # user = models.ForeignKey(User)
     name = models.CharField(max_length=200)
     email = models.EmailField()
     bio = models.TextField()
@@ -81,6 +83,7 @@ class Day(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class Time(models.Model):
     name = models.CharField(max_length=200)
 
@@ -89,6 +92,7 @@ class Time(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
@@ -99,6 +103,13 @@ class Location(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+# class Messages(models.Model):
+#     from_user = models.ForeignKey(User)
+#     to_user = models.ForeignKey(User)
+#     message = models.TextField(blank=True)
+
 
 class DancePrefs(models.Model):
     dance = models.ForeignKey(Dance)

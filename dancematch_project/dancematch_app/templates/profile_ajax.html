@@ -12,14 +12,20 @@
     var models = {};
 
     function select_options(select, data, name_field, id_field, selected) {
+        var not_set = true;
         for (var i = 0; i < data.length; i++) {
             var option = document.createElement('option');
             option.innerHTML = data[i][name_field];
             option.setAttribute("value", data[i][id_field]);
             if (data[i][name_field] == selected) {
                 option.setAttribute("selected", "selected");
+                not_set = false;
             }
             select.appendChild(option);
+        }
+        if (not_set) {
+            option.innerHTML = "(optional)";
+            option.setAttribute("selected", "selected");
         }
     }
 
@@ -28,21 +34,33 @@
         var template = pl.getElementsByClassName("template")[0];
 
         for (var i = 0; i < data.length; i++) {
-            if (!dancer_id || data[i].dancer_id == dancer_id) {
+            var current_pref = data[i];
+            if (!dancer_id || current_pref.dancer_id == dancer_id) {
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
-                clone.getElementsByClassName("dancer")[0].innerHTML = data[i].dancer;
-                clone.getElementsByClassName("dance")[0].innerHTML = data[i].dance;
-                clone.getElementsByClassName("role")[0].innerHTML = data[i].role;
-                clone.getElementsByClassName("notes")[0].innerHTML = data[i].notes;
+                clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.dancer;
+                clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
+                clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
+                if (current_pref.skill_level) {
+                    clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
+                } else {
+                    clone.getElementsByClassName("skill_level")[0].innerHTML = "";
+                }
+                clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
 
-                var selected_dance = data[i].dance;
+                var selected_dance = current_pref.dance;
                 select_options(clone.getElementsByClassName("dance_list")[0],
                         window.models["dances"], "name", "id", selected_dance);
 
-                var selected_role = data[i].role;
+                var selected_role = current_pref.role;
                 select_options(clone.getElementsByClassName("role_list")[0],
                         window.models["roles"], "name", "id", selected_role);
+
+                var selected_skill_level = current_pref.skill_level;
+                select_options(clone.getElementsByClassName("skill_level_list")[0],
+                            window.models["skill_levels"], "name", "id", selected_skill_level);
+
+                clone.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 
                 pl.appendChild(clone);
             }
@@ -69,6 +87,7 @@
 
     model_api("dances");
     model_api("roles");
+    model_api("skill_levels");
 
 
     // BEGIN WEB REST API CALL TO GET JSON DATA
@@ -130,12 +149,14 @@
         <li class="selected">
             <div class="read">
                 <span class="dance">Dance Style</span>: <span class="role">Role</span>
+                <span class="skill_level">Skill Level</span>
                 <span class="notes">Notes here.</span>
                 <span class="dancer">Dancer name</span>
             </div>
             <div class="edit">
                 <select class="dance_list">Dance Style</select>
                 <select class="role_list">Role</select>
+                <select class="skill_level_list">Skill Level</select>
                 <textarea class="notes_textarea">Notes here.</textarea>
             </div>
         </li>
