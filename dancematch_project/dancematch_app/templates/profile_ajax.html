@@ -8,7 +8,7 @@
     // Draw Loaded Data
 
     // TODO: get from new app status view
-    var user_id = 1;
+    var user_id = 2;
     var models = {};
 
     function select_options(select, data, name_field, id_field, selected) {
@@ -38,13 +38,27 @@
             if (!dancer_id || current_pref.dancer_id == dancer_id) {
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
+                clone.setAttribute("data-id", current_pref.id);
                 clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.dancer;
                 clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
                 clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
+
                 if (current_pref.skill_level) {
                     clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
                 } else {
                     clone.getElementsByClassName("skill_level")[0].innerHTML = "";
+                }
+
+                if (current_pref.activity) {
+                    clone.getElementsByClassName("activity")[0].innerHTML = current_pref.activity;
+                } else {
+                    clone.getElementsByClassName("activity")[0].innerHTML = "";
+                }
+
+                if (current_pref.goal) {
+                    clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
+                } else {
+                    clone.getElementsByClassName("goal")[0].innerHTML = "";
                 }
                 clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
 
@@ -60,6 +74,14 @@
                 select_options(clone.getElementsByClassName("skill_level_list")[0],
                             window.models["skill_levels"], "name", "id", selected_skill_level);
 
+                var selected_activity = current_pref.activity;
+                select_options(clone.getElementsByClassName("activity_list")[0],
+                            window.models["activity"], "name", "id", selected_activity);
+
+                var selected_goal = current_pref.goal;
+                select_options(clone.getElementsByClassName("goal_list")[0],
+                            window.models["goals"], "name", "id", selected_goal);
+
                 clone.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 
                 pl.appendChild(clone);
@@ -69,11 +91,46 @@
 //        document.body.innerHTML = data
     }
 
+
+    function add_listeners() {
+
+        var edit_divs = document.getElementsByClassName("edit");
+
+        for (i = 0; i < edit_divs.length; i++) {
+            current_div = edit_divs[i];
+//            console.log(current_div);
+            edit_fields = current_div.children;
+//            console.log(edit_fields);
+            for (i = 0; i < edit_fields.length; i++) {
+                field = edit_fields[i];
+                console.log(field);
+                field.addEventListener("change", function (e) {
+                    console.log(this);
+                    console.log(e.target);
+                });
+            }
+        }
+
+//        var selects = document.getElementsByTagName("select");
+//        var textareas = document.getElementsByTagName("textarea");
+//        var editable_fields = selects.concat(textareas);
+//
+//        for (i = 0; i < editable_fields.length; i++) {
+//            var field = editable_fields[i];
+//            console.log(field);
+//            field.addEventListener("change", function(e) {
+//                console.log(this);
+//                console.log(e.target);
+//            });
+//        }
+    }
+
     function model_api(object_type) {
         // get list of e.g. dances for dropdown
         var url = "/api_" + object_type + "/";
         var request = new XMLHttpRequest();
         request.open("GET", url);
+        console.log(request);
 
         //For pre html5 browsers use onstatuschanged
         request.onloadend = function (e) {
@@ -88,6 +145,8 @@
     model_api("dances");
     model_api("roles");
     model_api("skill_levels");
+    model_api("activity");
+    model_api("goals");
 
 
     // BEGIN WEB REST API CALL TO GET JSON DATA
@@ -100,9 +159,12 @@
         var json_string = e.currentTarget.responseText;
         var data = JSON.parse(json_string);
         draw(data, user_id);
+        add_listeners();
     };
 
     request.send();
+
+
 
 
     // get list of e.g. dances for dropdown
@@ -145,11 +207,14 @@
 <a href="/edit/{{ dancer.id }}/0/">Add a new dance</a>
 
 <div id="pref_list">
-    <ul class="pref list template">
-        <li class="selected">
+    <ul class="pref">
+        <li class="selected template">
             <div class="read">
-                <span class="dance">Dance Style</span>: <span class="role">Role</span>
+                <span class="dance">Dance Style</span>
+                <span class="role">Role</span>
                 <span class="skill_level">Skill Level</span>
+                <span class="activity">Activity Level</span>
+                <span class="goal">Goal</span>
                 <span class="notes">Notes here.</span>
                 <span class="dancer">Dancer name</span>
             </div>
@@ -157,6 +222,8 @@
                 <select class="dance_list">Dance Style</select>
                 <select class="role_list">Role</select>
                 <select class="skill_level_list">Skill Level</select>
+                <select class="activity_list">Activity Level</select>
+                <select class="goal_list">Goal</select>
                 <textarea class="notes_textarea">Notes here.</textarea>
             </div>
         </li>

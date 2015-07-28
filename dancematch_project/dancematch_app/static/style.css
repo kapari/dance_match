@@ -54,35 +54,15 @@ main {
     margin-bottom: 0em; /* size of footer */
 }
 
-.template {
-    display: none;
-}
-
 ul {
     list-style-type: none;
 }
 
 li {
     background-color: #fcfcfc;
-}
-
-.list > li {
-    padding: 0.5em 1em;
-    display: block;
-}
-
-.list > li:nth-child(odd) {
-    /*float: left;*/
-    /*clear: left;*/
-    /*display: block;*/
-}
-
-.list > li:nth-child(even) {
-    /*display: block;*/
-    /*float: left;*/
-    /*clear: right;*/
+    list-style-type: none;
     border-bottom: 3px solid #fff6f4;
-    color: gray;
+    padding: 1em;
 }
 
 .prefs > li {
@@ -116,4 +96,8 @@ footer {
     bottom: 0;
     height: 2em;
     padding: 0.5em 2em;
+}
+
+.template {
+    display: none;
 }

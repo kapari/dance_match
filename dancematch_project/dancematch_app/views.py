@@ -134,10 +134,17 @@ def api_dance_prefs(request):
         if pref.skill_level:
             prefdata["skill_level_id"] = pref.skill_level.id
             prefdata["skill_level"] = pref.skill_level.name
+        if pref.activity:
+            prefdata["activity_id"] = pref.activity.id
+            prefdata["activity"] = pref.activity.name
+        if pref.goal:
+            prefdata["goal_id"] = pref.goal.id
+            prefdata["goal"] = pref.goal.name
         prefdata["notes"] = pref.notes
         output.append(prefdata)
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
+
 
 def api_dances(request):
     dances = Dance.objects.order_by("name")
@@ -155,11 +162,27 @@ def api_roles(request):
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
+def api_activity(request):
+    activities = Activity.objects.order_by("name")
+    output = []
+    for activity in activities:
+        output.append({"name": activity.name, "id": activity.id})
+    return HttpResponse(json.dumps(output), content_type='application/json')
+
+
 def api_skill_levels(request):
     skill_levels = SkillLevel.objects.all()
     output = []
     for level in skill_levels:
         output.append({"name": level.name, "id": level.id})
+    return HttpResponse(json.dumps(output), content_type='application/json')
+
+
+def api_goals(request):
+    goals = Goals.objects.all()
+    output = []
+    for goal in goals:
+        output.append({"name": goal.name, "id": goal.id})
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
