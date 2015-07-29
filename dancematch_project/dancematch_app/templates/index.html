@@ -8,22 +8,22 @@
 {% if all_dancers %}
     <ul class="list template">
 
-    <!--{% for dancer in all_dancers|dictsort:"dancer.name" %}-->
-        <!--<li>-->
-            <!--<a href="/profile/{{ dancer.id }}/">{{ dancer.name }}</a>-->
-        <!--</li>-->
-        <!--<li>-->
-            <!--<ul>-->
-                <!--{% for pref in all_prefs|dictsort:"dance.name"%}-->
-                    <!--{% if pref.dancer.id == dancer.id %}-->
-                    <!--<li>-->
-                        <!--{{ pref.dance }} {{ pref.role }}-->
-                    <!--</li>-->
-                    <!--{% endif %}-->
-                <!--{% endfor %}-->
-            <!--</ul>-->
-        <!--</li>-->
-    <!--{% endfor %}-->
+    {% for dancer in all_dancers|dictsort:"dancer.name" %}
+        <li>
+            <a href="/profile/{{ dancer.id }}/">{{ dancer.name }}</a>
+        </li>
+        <li>
+            <ul>
+                {% for pref in all_prefs|dictsort:"dance.name"%}
+                    {% if pref.dancer.id == dancer.id %}
+                    <li>
+                        {{ pref.dance }} {{ pref.role }}
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
     </ul>
 {% else %}
     <p>No dancers are available.</p>

@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .models import Dancer, Dance, Day, Time, Location, DancePrefs, SkillLevel, Goals, Activity, DanceRole
 
@@ -145,8 +147,16 @@ def api_dance_prefs(request):
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
 
+#
+# def api_pref_models(request):
+#     dances = Dance.objects.order_by("name")
+#     roles = DanceRole.objects.order_by("name")
+#     activities = Activity.objects.order_by("name")
+#     skill_levels = SkillLevel.objects.all()
+#     goals = Goals.objects.all()
 
-def api_dances(request):
+
+def api_dance_list(request):
     dances = Dance.objects.order_by("name")
     output = []
     for dance in dances:
@@ -154,7 +164,7 @@ def api_dances(request):
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
-def api_roles(request):
+def api_role_list(request):
     roles = DanceRole.objects.order_by("name")
     output = []
     for role in roles:
@@ -162,7 +172,7 @@ def api_roles(request):
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
-def api_activity(request):
+def api_activity_list(request):
     activities = Activity.objects.order_by("name")
     output = []
     for activity in activities:
@@ -170,7 +180,7 @@ def api_activity(request):
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
-def api_skill_levels(request):
+def api_skill_level_list(request):
     skill_levels = SkillLevel.objects.all()
     output = []
     for level in skill_levels:
@@ -178,7 +188,7 @@ def api_skill_levels(request):
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
-def api_goals(request):
+def api_goal_list(request):
     goals = Goals.objects.all()
     output = []
     for goal in goals:
@@ -189,3 +199,50 @@ def api_goals(request):
 def profile_ajax(request):
     template = loader.get_template('profile_ajax.html')
     return HttpResponse(template.render())
+
+@csrf_exempt
+def update_pref(request):
+    if request.POST:
+        print(request.POST)
+        pref_id = int(request.POST.get("pref_id"))
+        dance_pref_list = DancePrefs.objects.filter(id=pref_id)
+        if len(dance_pref_list) > 0:
+            dance_pref = dance_pref_list[0]
+        else:
+            dance_pref = DancePrefs()
+
+        if "role" in request.POST:
+            role_id = int(request.POST.get("role"))
+            role = get_object_or_404(DanceRole, pk=role_id)
+            dance_pref.role = role
+
+        if "dance" in request.POST:
+            dance_id = int(request.POST.get("dance"))
+            dance = get_object_or_404(Dance, pk=dance_id)
+            dance_pref.dance = dance
+
+        if "skill_level" in request.POST:
+            skill_level_id = request.POST.get("skill_level")
+            if skill_level_id:
+                skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
+                dance_pref.skill_level = skill_level
+
+        if "activity" in request.POST:
+            activity_id = request.POST.get("activity")
+            if activity_id:
+                activity = Activity.objects.filter(pk=activity_id)[0]
+                dance_pref.activity = activity
+
+        if "goal" in request.POST:
+            goal_id = request.POST.get("goal")
+            if goal_id:
+                goal = Goals.objects.filter(pk=goal_id)[0]
+                dance_pref.goal = goal
+
+        if "notes" in request.POST:
+            dance_pref.notes = request.POST["notes"]
+
+        # dance_pref.dancer = dancer
+        dance_pref.save()
+
+        return HttpResponseRedirect("/profile_ajax/")

@@ -125,3 +125,4 @@ class DancePrefs(models.Model):
 
     def __unicode__(self):
         return str(self.dancer) + "'s " + str(self.dance) + ' prefs' + str(self.role)
+

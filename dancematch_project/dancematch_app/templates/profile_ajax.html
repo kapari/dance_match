@@ -29,6 +29,39 @@
         }
     }
 
+    // Draws select options in editable div of li
+    function draw_selects(clone, current_pref) {
+        var model_lists = ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"];
+        for (i = 0; i < model_lists.length; i++) {
+            current_model = model_lists[i];
+            select_options(clone.getElementsByClassName(current_model)[0],
+                    window.models[current_model], "name", "id", current_pref.current_model);
+        }
+    }
+
+
+    // Draws each pref li in template
+    function draw_list(clone, current_pref) {
+        var models = ["dancer", "dance", "role", "skill_level", "activity", "goal", "notes"];
+        for (i = 0; i < models.length; i++) {
+            var current_model = models[i];
+            var current_li = clone.getElementsByClassName(current_model)[0];
+            current_li.setAttribute("data-model", current_model);
+            // For optional fields:
+            if (current_pref.current_model) {
+                current_li.innerHTML = current_pref.current_model;
+            } else {
+                current_li.innerHTML = "";
+            }
+            // For corresponding edit div, not including notes
+//            draw_selects(clone, current_pref);
+//            var selected_dance = current_pref.dance;
+//                select_options(clone.getElementsByClassName("dance_list")[0],
+//                        window.models["dance_list"], "name", "id", selected_dance);
+        }
+
+    }
+
     function draw(data, dancer_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
@@ -39,6 +72,9 @@
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
                 clone.setAttribute("data-id", current_pref.id);
+                // draws li with read-only and edit divs, not incl. last textarea
+//                draw_list(clone, current_pref);
+
                 clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.dancer;
                 clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
                 clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
@@ -64,23 +100,23 @@
 
                 var selected_dance = current_pref.dance;
                 select_options(clone.getElementsByClassName("dance_list")[0],
-                        window.models["dances"], "name", "id", selected_dance);
+                        window.models["dance_list"], "name", "id", selected_dance);
 
                 var selected_role = current_pref.role;
                 select_options(clone.getElementsByClassName("role_list")[0],
-                        window.models["roles"], "name", "id", selected_role);
+                        window.models["role_list"], "name", "id", selected_role);
 
                 var selected_skill_level = current_pref.skill_level;
                 select_options(clone.getElementsByClassName("skill_level_list")[0],
-                            window.models["skill_levels"], "name", "id", selected_skill_level);
+                            window.models["skill_level_list"], "name", "id", selected_skill_level);
 
                 var selected_activity = current_pref.activity;
                 select_options(clone.getElementsByClassName("activity_list")[0],
-                            window.models["activity"], "name", "id", selected_activity);
+                            window.models["activity_list"], "name", "id", selected_activity);
 
                 var selected_goal = current_pref.goal;
                 select_options(clone.getElementsByClassName("goal_list")[0],
-                            window.models["goals"], "name", "id", selected_goal);
+                            window.models["goal_list"], "name", "id", selected_goal);
 
                 clone.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 
@@ -89,40 +125,64 @@
 
         }
 //        document.body.innerHTML = data
+        add_listeners();
+
     }
 
 
     function add_listeners() {
 
-        var edit_divs = document.getElementsByClassName("edit");
+        var edit_fields = document.getElementsByClassName("edit_field");
+        for (i = 0; i < edit_fields.length; i++) {
+            var current_field = edit_fields[i];
+            console.log("current field = " + current_field);
+            current_field.addEventListener("change", function (e) {
+                var group_div = e.target.parentElement;
+                var pref_id_div = group_div.parentElement;
+                var pref_id = pref_id_div.getAttribute("data-id");
+//                var field_model_id = e.target.getAttribute("data-model_id");
+                field_model = "notes";
+                var field_value = e.target.value;
 
-        for (i = 0; i < edit_divs.length; i++) {
-            current_div = edit_divs[i];
-//            console.log(current_div);
-            edit_fields = current_div.children;
-//            console.log(edit_fields);
-            for (i = 0; i < edit_fields.length; i++) {
-                field = edit_fields[i];
-                console.log(field);
-                field.addEventListener("change", function (e) {
-                    console.log(this);
-                    console.log(e.target);
-                });
-            }
+//                console.log(e.target.value);
+//                console.log(group_div);
+//                console.log(pref_id_div.getAttribute("data-id"));
+
+                // TODO: AJAX POST create item
+                var update = {"pref_id": pref_id};
+                var value = e.target.value;
+
+                // Build:
+                if (e.target.classList.contains("dance_list")) {
+                    update["dance"] = value;
+                } else if (e.target.classList.contains("role_list")){
+                    update["role"] = value;
+                } else if (e.target.classList.contains("skill_level")){
+                    update["skill_level"] = value;
+                } else if (e.target.classList.contains("activity")){
+                    update["activity"] = value;
+                } else if (e.target.classList.contains("goal_list")){
+                    update["goal"] = value;
+                } else if (e.target.classList.contains("notes_textarea")){
+                    update["notes"] = value;
+                }
+
+                sendPost(update);
+            });
+        }
+    }
+
+    // AJAX POST
+    function sendPost(item) {
+        var form_data = new FormData();
+
+        for (var key in item) {
+            form_data.append(key, item[key]);
         }
 
-//        var selects = document.getElementsByTagName("select");
-//        var textareas = document.getElementsByTagName("textarea");
-//        var editable_fields = selects.concat(textareas);
-//
-//        for (i = 0; i < editable_fields.length; i++) {
-//            var field = editable_fields[i];
-//            console.log(field);
-//            field.addEventListener("change", function(e) {
-//                console.log(this);
-//                console.log(e.target);
-//            });
-//        }
+        var request = new XMLHttpRequest();
+        request.open("POST", "/update_pref/");
+        request.send(form_data);
     }
 
     function model_api(object_type) {
@@ -142,11 +202,11 @@
         request.send();
     }
 
-    model_api("dances");
-    model_api("roles");
-    model_api("skill_levels");
-    model_api("activity");
-    model_api("goals");
+    model_api("dance_list");
+    model_api("role_list");
+    model_api("skill_level_list");
+    model_api("activity_list");
+    model_api("goal_list");
 
 
     // BEGIN WEB REST API CALL TO GET JSON DATA
@@ -159,27 +219,10 @@
         var json_string = e.currentTarget.responseText;
         var data = JSON.parse(json_string);
         draw(data, user_id);
-        add_listeners();
     };
 
     request.send();
 
-
-
-
-    // get list of e.g. dances for dropdown
-//    var url = "/api_dances/";
-//    var request = new XMLHttpRequest();
-//    request.open("GET", url);
-//
-//    //For pre html5 browsers use onstatuschanged
-//    request.onloadend = function (e) {
-//        var json_string = e.currentTarget.responseText;
-//        var data = JSON.parse(json_string);
-//        window.dances = data;
-//    };
-//
-//    request.send();
 
 </script>
 
@@ -219,12 +262,12 @@
                 <span class="dancer">Dancer name</span>
             </div>
             <div class="edit">
-                <select class="dance_list">Dance Style</select>
-                <select class="role_list">Role</select>
-                <select class="skill_level_list">Skill Level</select>
-                <select class="activity_list">Activity Level</select>
-                <select class="goal_list">Goal</select>
-                <textarea class="notes_textarea">Notes here.</textarea>
+                <select class="edit_field dance_list">Dance Style</select>
+                <select class="edit_field role_list">Role</select>
+                <select class="edit_field skill_level_list">Skill Level</select>
+                <select class="edit_field activity_list">Activity Level</select>
+                <select class="edit_field goal_list">Goal</select>
+                <textarea class="edit_field notes_textarea">Notes here.</textarea>
             </div>
         </li>
     </ul>

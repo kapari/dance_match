@@ -31,11 +31,12 @@ urlpatterns = [
     url(r'^dances/', views.dances, name='dances'),
     url(r'^results/', views.results, name='results'),
     url(r'^api_dance_prefs/', views.api_dance_prefs, name='api_dance_prefs'),
-    url(r'^api_dances/', views.api_dances, name='api_dances'),
-    url(r'^api_roles/', views.api_roles, name='api_roles'),
-    url(r'^api_skill_levels/', views.api_skill_levels, name='api_skill_levels'),
-    url(r'^api_activity/', views.api_activity, name='api_activity'),
-    url(r'^api_goals/', views.api_goals, name='api_goals'),
+    url(r'^api_dance_list/', views.api_dance_list, name='api_dance_list'),
+    url(r'^api_role_list/', views.api_role_list, name='api_role_list'),
+    url(r'^api_skill_level_list/', views.api_skill_level_list, name='api_skill_level_list'),
+    url(r'^api_activity_list/', views.api_activity_list, name='api_activity_list'),
+    url(r'^api_goal_list/', views.api_goal_list, name='api_goal_list'),
     # ex. /profile_ajax/
     url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),
+    url(r'^update_pref/$', views.update_pref, name='update_pref')
 ]
