@@ -24,7 +24,7 @@ def index(request):
     return HttpResponse(template.render(context))
 
 
-def login(request):
+def login_view(request):
     if request.POST:
         username = request.POST['username']
         password = request.POST['password']
@@ -32,12 +32,12 @@ def login(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect("/")
+                return HttpResponseRedirect("/profile_ajax/")
 
     return render(request, 'login.html', {})
 
 
-def register(request):
+def register_view(request):
     if request.POST:
         user = User()
         user.username = request.POST['username']
@@ -222,7 +222,7 @@ def api_goal_list(request):
         output.append({"name": goal.name, "id": goal.id})
     return HttpResponse(json.dumps(output), content_type='application/json')
 
-
+@login_required(login_url='/login/')
 def profile_ajax(request):
     template = loader.get_template('profile_ajax.html')
     return HttpResponse(template.render())
