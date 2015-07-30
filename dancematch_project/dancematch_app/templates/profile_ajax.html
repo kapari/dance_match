@@ -3,12 +3,16 @@
 
 {% block content %}
 
+
 <script>
+    var user_id = {{ user.id }}
+    var dancer_id = {{ dancer.user.id }}
+
     document.write("test");
     // Draw Loaded Data
 
+
     // TODO: get from new app status view
-    var user_id = 2;
     var models = {};
 
     function select_options(select, data, name_field, id_field, selected) {
@@ -247,7 +251,7 @@
 
 <h2>{{ dancer.name }}'s Dances</h2>
 
-<a href="/edit/{{ dancer.id }}/0/">Add a new dance</a>
+<a href="/edit/{{ user.id }}/0/">Add a new dance</a>
 
 <div id="pref_list">
     <ul class="pref">

@@ -1,0 +1,106 @@
+[
+  {
+    "fields": {
+      "name": "Waltz",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "name": "West Coast Swing",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "name": "Foxtrot",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "name": "Country Two-Step",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "name": "Chacha",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "name": "Salsa",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 6
+  },
+  {
+    "fields": {
+      "name": "Nightclub Two-Step",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 7
+  },
+  {
+    "fields": {
+      "name": "Rumba",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 8
+  },
+  {
+    "fields": {
+      "name": "Hustle",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 9
+  },
+  {
+    "fields": {
+      "name": "Bachata",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 10
+  },
+  {
+    "fields": {
+      "name": "Tango",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 11
+  },
+  {
+    "fields": {
+      "name": "Quickstep",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 12
+  },
+  {
+    "fields": {
+      "name": "Polka",
+      "description": ""
+    },
+    "model": "dancematch_app.dance",
+    "pk": 13
+  }
+]

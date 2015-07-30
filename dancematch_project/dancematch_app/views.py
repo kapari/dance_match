@@ -41,8 +41,14 @@ def register_view(request):
     if request.POST:
         user = User()
         user.username = request.POST['username']
+        user.email = request.POST['username']
         user.set_password(request.POST['password'])
         user.save()
+
+        dancer = Dancer()
+        dancer.user = user
+        dancer.save()
+
         return HttpResponseRedirect("/login/")
 
     return render(request, 'register.html', {})
@@ -86,8 +92,11 @@ def edit_profile(request, dancer_id):
                                          })
 
 
-def edit_dance(request, dancer_id, dance_pref_id):
-    dancer = get_object_or_404(Dancer, pk=dancer_id)
+def edit_dance(request, user_id, dance_pref_id):
+    user = get_object_or_404(User, pk=user_id)
+    print(user.id)
+    dancer = get_object_or_404(Dancer, pk=user.id)
+    print("dancer id: " + str(dancer.id))
     dance_pref_list = DancePrefs.objects.filter(id=dance_pref_id)
     if len(dance_pref_list) > 0:
         dance_pref = dance_pref_list[0]
@@ -129,7 +138,7 @@ def edit_dance(request, dancer_id, dance_pref_id):
         dance_pref.dancer = dancer
         dance_pref.save()
 
-        return HttpResponseRedirect("/profile/" + str(dancer.id) + "/")
+        return HttpResponseRedirect("/profile/" + str(dancer.user.id) + "/")
 
     return render(request, 'edit_dance.html', {'dancer': dancer,
                                                'dance_pref': dance_pref,
@@ -154,8 +163,8 @@ def api_dance_prefs(request):
     for pref in dance_pref_list:
         prefdata = {}
         prefdata["id"] = pref.id
-        prefdata["dancer_id"] = pref.dancer.id
-        prefdata["dancer"] = pref.dancer.name
+        prefdata["dancer_id"] = pref.dancer.user.id
+        prefdata["dancer"] = pref.dancer.user.username
         prefdata["dance_id"] = pref.dance.id
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id
@@ -224,8 +233,10 @@ def api_goal_list(request):
 
 @login_required(login_url='/login/')
 def profile_ajax(request):
+    print(request.user.id)
     template = loader.get_template('profile_ajax.html')
-    return HttpResponse(template.render())
+    context = RequestContext(request, {})
+    return HttpResponse(template.render(context))
 
 @csrf_exempt
 def update_pref(request):

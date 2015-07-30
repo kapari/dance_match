@@ -3,9 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Dancer(models.Model):
-    user = models.ForeignKey(User)
-    name = models.CharField(max_length=200)
-    email = models.EmailField()
+    user = models.OneToOneField(User)
     bio = models.TextField()
     # photo = ImageField() https://docs.djangoproject.com/en/1.8/ref/models/fields/
 
