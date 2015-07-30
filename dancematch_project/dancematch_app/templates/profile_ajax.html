@@ -6,9 +6,8 @@
 
 <script>
     var user_id = {{ user.id }}
-    var dancer_id = {{ dancer.user.id }}
 
-    document.write("test");
+    document.write("test for user ID " + user_id);
     // Draw Loaded Data
 
 
@@ -66,13 +65,13 @@
 
     }
 
-    function draw(data, dancer_id) {
+    function draw(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
 
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
-            if (!dancer_id || current_pref.dancer_id == dancer_id) {
+            if (!user_id || current_pref.dancer.user_id == user_id) {
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
                 clone.setAttribute("data-id", current_pref.id);
@@ -234,22 +233,22 @@
 <h1>{{ dancer.name }}</h1>
 
 {% if dancer.active_member %}
-    {{ dancer.name }} is looking for a buddy!
+    {{ dancer.user.first_name }} is looking for a buddy!
 {% else %}
-    {{ dancer.name }} is not currently looking for a buddy.
+    {{ dancer.user.first_name }} is not currently looking for a buddy.
 {% endif %}
 
 <div class="bio">
     {{ dancer.bio }}
 </div>
 <div class="contact">
-    {{ dancer.email }}
+    {{ dancer.user.email }}
 </div>
 
 <br>
 <a href="/edit/{{ dancer.id }}">Edit</a>
 
-<h2>{{ dancer.name }}'s Dances</h2>
+<h2>{{ dancer.user.first_name }}'s Dances</h2>
 
 <a href="/edit/{{ user.id }}/0/">Add a new dance</a>
 

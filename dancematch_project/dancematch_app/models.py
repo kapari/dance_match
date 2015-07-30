@@ -8,10 +8,10 @@ class Dancer(models.Model):
     # photo = ImageField() https://docs.djangoproject.com/en/1.8/ref/models/fields/
 
     def __str__(self):
-        return self.name
+        return "User ID: " + str(self.user.id) + str(self.user.first_name) + " " + str(self.user.last_name)
 
     def __unicode__(self):
-        return self.name
+        return "User ID: " + str(self.user.id) + str(self.user.first_name) + " " + str(self.user.last_name)
 
 
 class Dance(models.Model):

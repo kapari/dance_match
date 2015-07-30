@@ -94,9 +94,7 @@ def edit_profile(request, dancer_id):
 
 def edit_dance(request, user_id, dance_pref_id):
     user = get_object_or_404(User, pk=user_id)
-    print(user.id)
-    dancer = get_object_or_404(Dancer, pk=user.id)
-    print("dancer id: " + str(dancer.id))
+    dancer = get_object_or_404(Dancer, user=user)
     dance_pref_list = DancePrefs.objects.filter(id=dance_pref_id)
     if len(dance_pref_list) > 0:
         dance_pref = dance_pref_list[0]
@@ -138,7 +136,7 @@ def edit_dance(request, user_id, dance_pref_id):
         dance_pref.dancer = dancer
         dance_pref.save()
 
-        return HttpResponseRedirect("/profile/" + str(dancer.user.id) + "/")
+        return HttpResponseRedirect("/profile_ajax/")
 
     return render(request, 'edit_dance.html', {'dancer': dancer,
                                                'dance_pref': dance_pref,
