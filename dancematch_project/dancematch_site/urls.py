@@ -38,5 +38,9 @@ urlpatterns = [
     url(r'^api_goal_list/', views.api_goal_list, name='api_goal_list'),
     # ex. /profile_ajax/
     url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),
-    url(r'^update_pref/$', views.update_pref, name='update_pref')
+    url(r'^update_pref/$', views.update_pref, name='update_pref'),
+
+    # Login
+    url(r'^login/$', views.login, name='login'),
+    url(r'^register/$', views.register, name='register')
 ]

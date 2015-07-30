@@ -3,6 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 from .models import Dancer, Dance, Day, Time, Location, DancePrefs, SkillLevel, Goals, Activity, DanceRole
@@ -19,6 +22,30 @@ def index(request):
                              'all_prefs': all_prefs,
                              })
     return HttpResponse(template.render(context))
+
+
+def login(request):
+    if request.POST:
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect("/")
+
+    return render(request, 'login.html', {})
+
+
+def register(request):
+    if request.POST:
+        user = User()
+        user.username = request.POST['username']
+        user.set_password(request.POST['password'])
+        user.save()
+        return HttpResponseRedirect("/login/")
+
+    return render(request, 'register.html', {})
 
 
 def profile(request, dancer_id):

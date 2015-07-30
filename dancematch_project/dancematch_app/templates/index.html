@@ -5,28 +5,9 @@
 
 <a href="/results/">See all dances</a>
 
-{% if all_dancers %}
-    <ul class="list template">
-
-    {% for dancer in all_dancers|dictsort:"dancer.name" %}
-        <li>
-            <a href="/profile/{{ dancer.id }}/">{{ dancer.name }}</a>
-        </li>
-        <li>
-            <ul>
-                {% for pref in all_prefs|dictsort:"dance.name"%}
-                    {% if pref.dancer.id == dancer.id %}
-                    <li>
-                        {{ pref.dance }} {{ pref.role }}
-                    </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No dancers are available.</p>
-{% endif %}
+<h1>Welcome</h1>
+<p>This is the index page, yay.</p>
+<p><a href="/login/">Log in to your account.</a></p>
+<p><a href="/register/">Register for a new account.</a></p>
 
 {% endblock %}
