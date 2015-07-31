@@ -73,19 +73,17 @@
 
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
-            // console.log("dancer: " + current_pref.dancer);
-            console.log("current pref:");
-            console.log(current_pref);
+//            console.log("current pref:");
+//            console.log(current_pref);
             if (!user_id || current_pref.user_id == user_id) {
                 console.log("user_id " + user_id);
-                // console.log("dancer.id " + current_pref.dancer.id);
-                // console.log("dancer.user.id " + current_pref.dancer.user.id);
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
                 clone.setAttribute("data-id", current_pref.id);
                 // draws li with read-only and edit divs, not incl. last textarea
 //                draw_list(clone, current_pref);
 
+                // Read-only div
                 clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
                 clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
                 clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
@@ -109,6 +107,10 @@
                 }
                 clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
 
+                // Edit div
+                var edit_div = clone.getElementsByClassName("edit")[0];
+                edit_div.classList.add("hide");
+
                 var selected_dance = current_pref.dance;
                 select_options(clone.getElementsByClassName("dance_list")[0],
                         window.models["dance_list"], "name", "id", selected_dance);
@@ -131,6 +133,9 @@
 
                 clone.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 
+                toggle_button = clone.getElementsByClassName("edit_toggle")[0];
+                add_toggle_listener(toggle_button);
+
                 pl.appendChild(clone);
             }
 
@@ -151,15 +156,7 @@
                 var group_div = e.target.parentElement;
                 var pref_id_div = group_div.parentElement;
                 var pref_id = pref_id_div.getAttribute("data-id");
-//                var field_model_id = e.target.getAttribute("data-model_id");
-                field_model = "notes";
-                var field_value = e.target.value;
 
-//                console.log(e.target.value);
-//                console.log(group_div);
-//                console.log(pref_id_div.getAttribute("data-id"));
-
-                // TODO: AJAX POST create item
                 var update = {"user_id": user_id,
                               "pref_id": pref_id};
                 var value = e.target.value;
@@ -183,6 +180,25 @@
             });
         }
     }
+
+
+    // Show/hide
+    function add_toggle_listener(button) {
+        button.addEventListener("click", function(e) {
+            var pref_li = button.parentElement.parentElement;
+            var edit_div = pref_li.getElementsByClassName("edit")[0];
+            var read_div = pref_li.getElementsByClassName("read")[0];
+            edit_div.classList.toggle("hide");
+            read_div.classList.toggle("hide");
+            button.classList.toggle("show_edit");
+            if (button.classList.contains("show_edit")) {
+                button.innerText = "Done";
+            } else {
+                button.innerText = "Edit";
+            }
+        });
+    }
+
 
     // AJAX POST
     function sendPost(item) {
@@ -274,6 +290,9 @@
                 <select class="edit_field activity_list">Activity Level</select>
                 <select class="edit_field goal_list">Goal</select>
                 <textarea class="edit_field notes_textarea">Notes here.</textarea>
+            </div>
+            <div>
+                <button class="edit_toggle">Edit</button>
             </div>
         </li>
     </ul>
