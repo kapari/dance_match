@@ -66,6 +66,18 @@
 
     }
 
+    // TODO: be able to pull info out of json; still need to set up edit/update functionality
+    function drawProfile(data, user_id) {
+        var profile = document.getElementById("profile");
+        // only one dict in list
+        var p_dict = data[0];
+        profile.getElementsByClassName("username")[0].innerText = p_dict["username"];
+        profile.getElementsByClassName("first_name")[0].innerText = p_dict["first_name"];
+        profile.getElementsByClassName("last_name")[0].innerText = p_dict["last_name"];
+        profile.getElementsByClassName("bio")[0].innerText = p_dict["bio"];
+    }
+
+
     function draw(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
@@ -147,8 +159,8 @@
 
 
     function add_listeners() {
-
-        var edit_fields = document.getElementsByClassName("edit_field");
+        var pl = document.getElementById("pref_list");
+        var edit_fields = pl.getElementsByClassName("edit_field");
         for (i = 0; i < edit_fields.length; i++) {
             var current_field = edit_fields[i];
             console.log("current field = " + current_field);
@@ -160,25 +172,28 @@
                 var update = {"user_id": user_id,
                               "pref_id": pref_id};
                 var value = e.target.value;
-
-                // find text to change read-only
-                text = get_new_option(value);
+                var text = '';
 
                 // Build update dict & Change values in read-only
                 if (e.target.classList.contains("dance_list")) {
                     update["dance"] = value;
+                    text = get_new_option(value, "dance_list");
                     pref_id_div.getElementsByClassName("dance")[0].innerText = text;
                 } else if (e.target.classList.contains("role_list")){
                     update["role"] = value;
+                    text = get_new_option(value, "role_list");
                     pref_id_div.getElementsByClassName("role")[0].innerText = text;
                 } else if (e.target.classList.contains("skill_level_list")){
                     update["skill_level"] = value;
+                    text = get_new_option(value, "skill_level_list");
                     pref_id_div.getElementsByClassName("skill_level")[0].innerText = text;
                 } else if (e.target.classList.contains("activity_list")){
                     update["activity"] = value;
+                    text = get_new_option(value, "activity_list");
                     pref_id_div.getElementsByClassName("activity")[0].innerText = text;
                 } else if (e.target.classList.contains("goal_list")){
                     update["goal"] = value;
+                    text = get_new_option(value, "goal_list");
                     pref_id_div.getElementsByClassName("goal")[0].innerText = text;
                 } else if (e.target.classList.contains("notes_textarea")){
                     update["notes"] = value;
@@ -191,8 +206,8 @@
     }
 
     // Update read-only values
-    function get_new_option(value) {
-        var option_list = window.models["dance_list"];
+    function get_new_option(value, model) {
+        var option_list = window.models[model];
         var option_count = option_list.length;
         var text = "NOPE";
         for (i = 0; i < option_count; i++) {
@@ -276,20 +291,39 @@
     request.send();
 
 
+    // API call for profile data
+    url = "/api_profile/";
+    request = new XMLHttpRequest();
+    request.open("GET", url);
+
+    request.onloadend = function (e) {
+    var json_string = e.currentTarget.responseText;
+    var data = JSON.parse(json_string);
+    drawProfile(data, user_id);
+    };
+
+
 </script>
 
 
 <h1>{{ dancer.name }}</h1>
 
-<div class="bio">
-    {{ dancer.bio }}
+<div id="profile">
+    <div class="read">
+        <span class="username">Username</span>
+        <span class="first_name">First Name</span>
+        <span class="last_name">Last Name</span>
+        <span class="bio">Bio goes here</span>
+    </div>
+    <div class="edit">
+        <input class="edit_field" type="text" name="fname" placeholder="First Name">
+        <input class="edit_field" type="text" name="lname" placeholder="Last Name">
+        <textarea class="edit_field" name="bio" rows="4" cols="50" placeholder="Tell us about yourself!"></textarea>
+    </div>
+    <div>
+        <button class="edit_toggle">Edit</button>
+    </div>
 </div>
-<div class="contact">
-    {{ user.email }}
-</div>
-
-<br>
-<a href="/edit/{{ user.id }}">Edit</a>
 
 <h2>{{ dancer.user.first_name }}'s Dances</h2>
 
@@ -313,7 +347,7 @@
                 <select class="edit_field skill_level_list">Skill Level</select>
                 <select class="edit_field activity_list">Activity Level</select>
                 <select class="edit_field goal_list">Goal</select>
-                <textarea class="edit_field notes_textarea">Notes here.</textarea>
+                <textarea class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>
             </div>
             <div>
                 <button class="edit_toggle">Edit</button>

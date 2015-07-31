@@ -83,7 +83,6 @@ def edit_profile(request, dancer_id):
         dancer.name = request.POST["name"]
         dancer.email = request.POST["email"]
         dancer.bio = request.POST["bio"]
-        dancer.active_member = request.POST.get("active_member", False)
         dancer.save()
         return HttpResponseRedirect("/profile/" + str(dancer.id) + "/")
 
@@ -181,6 +180,21 @@ def api_dance_prefs(request):
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
 
+def api_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    dancer = user.dancer
+    output = []
+    profile_data = {}
+    profile_data["id"] = user.id
+    profile_data["dancer"] = user.dancer
+    profile_data["username"] = user.username
+    profile_data["first_name"] = user.first_name
+    profile_data["last_name"] = user.last_name
+    profile_data["bio"] = dancer.bio
+    output.append(profile_data)
+    json_data = json.dumps(output, indent=4)
+    return HttpResponse(json_data, content_type='application/json')
+
 #
 # def api_pref_models(request):
 #     dances = Dance.objects.order_by("name")
@@ -235,6 +249,24 @@ def profile_ajax(request):
     template = loader.get_template('profile_ajax.html')
     context = RequestContext(request, {})
     return HttpResponse(template.render(context))
+
+def update_profile(request):
+    if request.POST:
+        print(request.POST)
+        user_id = int(request.POST.get("user_id"))
+        user = get_object_or_404(User, id=user_id)
+        dancer = user.dancer
+        if "first_name" in request.POST:
+            user.first_name = request.POST.get("first_name")
+        if "last_name" in request.POST:
+            user.last_name = request.POST.get("last_name")
+        if "bio" in request.POST:
+            dancer.bio = request.POST.get("bio")
+
+        user.save()
+        dancer.save()
+
+        return HttpResponseRedirect("/profile_ajax/")
 
 @csrf_exempt
 def update_pref(request):
