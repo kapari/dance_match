@@ -6,8 +6,9 @@
 
 <script>
     var user_id = {{ user.id }}
+    var dancer_id = {{ user.dancer.id }}
 
-    document.write("test for user ID " + user_id);
+    document.write("test for user ID " + user_id + "-- dancer ID: " + dancer_id);
     // Draw Loaded Data
 
 
@@ -68,17 +69,24 @@
     function draw(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
+        console.log(data);
 
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
-            if (!user_id || current_pref.dancer.user_id == user_id) {
+            // console.log("dancer: " + current_pref.dancer);
+            console.log("current pref:");
+            console.log(current_pref);
+            if (!user_id || current_pref.user_id == user_id) {
+                console.log("user_id " + user_id);
+                // console.log("dancer.id " + current_pref.dancer.id);
+                // console.log("dancer.user.id " + current_pref.dancer.user.id);
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
                 clone.setAttribute("data-id", current_pref.id);
                 // draws li with read-only and edit divs, not incl. last textarea
 //                draw_list(clone, current_pref);
 
-                clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.dancer;
+                clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
                 clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
                 clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
 
@@ -152,7 +160,8 @@
 //                console.log(pref_id_div.getAttribute("data-id"));
 
                 // TODO: AJAX POST create item
-                var update = {"pref_id": pref_id};
+                var update = {"user_id": user_id,
+                              "pref_id": pref_id};
                 var value = e.target.value;
 
                 // Build:
@@ -232,21 +241,15 @@
 
 <h1>{{ dancer.name }}</h1>
 
-{% if dancer.active_member %}
-    {{ dancer.user.first_name }} is looking for a buddy!
-{% else %}
-    {{ dancer.user.first_name }} is not currently looking for a buddy.
-{% endif %}
-
 <div class="bio">
     {{ dancer.bio }}
 </div>
 <div class="contact">
-    {{ dancer.user.email }}
+    {{ user.email }}
 </div>
 
 <br>
-<a href="/edit/{{ dancer.id }}">Edit</a>
+<a href="/edit/{{ user.id }}">Edit</a>
 
 <h2>{{ dancer.user.first_name }}'s Dances</h2>
 

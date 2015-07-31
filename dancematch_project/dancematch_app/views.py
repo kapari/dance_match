@@ -161,8 +161,8 @@ def api_dance_prefs(request):
     for pref in dance_pref_list:
         prefdata = {}
         prefdata["id"] = pref.id
-        prefdata["dancer_id"] = pref.dancer.user.id
-        prefdata["dancer"] = pref.dancer.user.username
+        prefdata["user_id"] = pref.dancer.user.id
+        prefdata["user"] = pref.dancer.user.username
         prefdata["dance_id"] = pref.dance.id
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id
@@ -241,11 +241,20 @@ def update_pref(request):
     if request.POST:
         print(request.POST)
         pref_id = int(request.POST.get("pref_id"))
+        user_id = int(request.POST.get("user_id"))
+        dancer_id = int(request.POST.get("dancer_id"))
         dance_pref_list = DancePrefs.objects.filter(id=pref_id)
+        user = get_object_or_404(User, id=user_id)
+        dancer = get_object_or_404(Dancer, id=dancer_id)
+        print(user)
+
         if len(dance_pref_list) > 0:
             dance_pref = dance_pref_list[0]
         else:
             dance_pref = DancePrefs()
+            dance_pref.user = user
+            dance_pref.dancer = dancer
+
 
         if "role" in request.POST:
             role_id = int(request.POST.get("role"))
@@ -278,7 +287,6 @@ def update_pref(request):
         if "notes" in request.POST:
             dance_pref.notes = request.POST["notes"]
 
-        # dance_pref.dancer = dancer
         dance_pref.save()
 
         return HttpResponseRedirect("/profile_ajax/")
