@@ -242,10 +242,8 @@ def update_pref(request):
         print(request.POST)
         pref_id = int(request.POST.get("pref_id"))
         user_id = int(request.POST.get("user_id"))
-        dancer_id = int(request.POST.get("dancer_id"))
         dance_pref_list = DancePrefs.objects.filter(id=pref_id)
         user = get_object_or_404(User, id=user_id)
-        dancer = get_object_or_404(Dancer, id=dancer_id)
         print(user)
 
         if len(dance_pref_list) > 0:
@@ -253,7 +251,7 @@ def update_pref(request):
         else:
             dance_pref = DancePrefs()
             dance_pref.user = user
-            dance_pref.dancer = dancer
+            dance_pref.dancer = user.dancer
 
 
         if "role" in request.POST:
@@ -267,19 +265,19 @@ def update_pref(request):
             dance_pref.dance = dance
 
         if "skill_level" in request.POST:
-            skill_level_id = request.POST.get("skill_level")
+            skill_level_id = int(request.POST.get("skill_level"))
             if skill_level_id:
                 skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
                 dance_pref.skill_level = skill_level
 
         if "activity" in request.POST:
-            activity_id = request.POST.get("activity")
+            activity_id = int(request.POST.get("activity"))
             if activity_id:
                 activity = Activity.objects.filter(pk=activity_id)[0]
                 dance_pref.activity = activity
 
         if "goal" in request.POST:
-            goal_id = request.POST.get("goal")
+            goal_id = int(request.POST.get("goal"))
             if goal_id:
                 goal = Goals.objects.filter(pk=goal_id)[0]
                 dance_pref.goal = goal

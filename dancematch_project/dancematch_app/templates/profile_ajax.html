@@ -8,7 +8,7 @@
     var user_id = {{ user.id }}
     var dancer_id = {{ user.dancer.id }}
 
-    document.write("test for user ID " + user_id + "-- dancer ID: " + dancer_id);
+    document.write("test for user ID: " + user_id + " -- dancer ID: " + dancer_id);
     // Draw Loaded Data
 
 
@@ -161,14 +161,14 @@
                               "pref_id": pref_id};
                 var value = e.target.value;
 
-                // Build:
+                // Build & Update values in read-only
                 if (e.target.classList.contains("dance_list")) {
                     update["dance"] = value;
                 } else if (e.target.classList.contains("role_list")){
                     update["role"] = value;
-                } else if (e.target.classList.contains("skill_level")){
+                } else if (e.target.classList.contains("skill_level_list")){
                     update["skill_level"] = value;
-                } else if (e.target.classList.contains("activity")){
+                } else if (e.target.classList.contains("activity_list")){
                     update["activity"] = value;
                 } else if (e.target.classList.contains("goal_list")){
                     update["goal"] = value;
