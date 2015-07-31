@@ -96,6 +96,10 @@ form textarea:focus {
     border: 2px solid #b1e0db;
 }
 
+button {
+    padding: 0.5em 1em;
+}
+
 footer {
     bottom: 0;
     height: 2em;

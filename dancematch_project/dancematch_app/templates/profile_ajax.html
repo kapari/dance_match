@@ -161,24 +161,48 @@
                               "pref_id": pref_id};
                 var value = e.target.value;
 
-                // Build & Update values in read-only
+                // find text to change read-only
+                text = get_new_option(value);
+
+                // Build update dict & Change values in read-only
                 if (e.target.classList.contains("dance_list")) {
                     update["dance"] = value;
+                    pref_id_div.getElementsByClassName("dance")[0].innerText = text;
                 } else if (e.target.classList.contains("role_list")){
                     update["role"] = value;
+                    pref_id_div.getElementsByClassName("role")[0].innerText = text;
                 } else if (e.target.classList.contains("skill_level_list")){
                     update["skill_level"] = value;
+                    pref_id_div.getElementsByClassName("skill_level")[0].innerText = text;
                 } else if (e.target.classList.contains("activity_list")){
                     update["activity"] = value;
+                    pref_id_div.getElementsByClassName("activity")[0].innerText = text;
                 } else if (e.target.classList.contains("goal_list")){
                     update["goal"] = value;
+                    pref_id_div.getElementsByClassName("goal")[0].innerText = text;
                 } else if (e.target.classList.contains("notes_textarea")){
                     update["notes"] = value;
+                    pref_id_div.getElementsByClassName("notes")[0].innerText = value;
                 }
 
                 sendPost(update);
             });
         }
+    }
+
+    // Update read-only values
+    function get_new_option(value) {
+        var option_list = window.models["dance_list"];
+        var option_count = option_list.length;
+        var text = "NOPE";
+        for (i = 0; i < option_count; i++) {
+            var option = option_list[i];
+            if (option.id == value) {
+                text = option.name;
+                break;
+            }
+        }
+        return text;
     }
 
 
