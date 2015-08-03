@@ -54,6 +54,27 @@ main {
     margin-bottom: 0em; /* size of footer */
 }
 
+/* TABLES */
+table {
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #e88d67;
+    color: white;
+    text-align: left;
+    border-bottom: 1px solid white;
+}
+
+tbody tr:nth-child(odd){
+    background-color: #fcfcfc;
+}
+
+th, td {
+    padding: 0.5em;
+}
+
+/* LISTS */
 ul {
     list-style-type: none;
 }
@@ -73,6 +94,7 @@ li {
     display: block;
 }
 
+/* FORMS */
 form {
     background-color: #fcfcfc;
     padding: 1.5em;
@@ -96,8 +118,19 @@ form textarea:focus {
     border: 2px solid #b1e0db;
 }
 
+select {
+    border: 1px solid #e88d67;
+    border-radius: 0;
+    background-color: #fff6f4;
+    padding: 0.5em;
+    line-height: 1.5em;
+    /*-webkit-appearance: none;*/
+}
+
 button {
     padding: 0.5em 1em;
+    border: 1px solid #e88d67;
+    background-color: #fff6f4;
 }
 
 footer {
@@ -106,6 +139,7 @@ footer {
     padding: 0.5em 2em;
 }
 
+/* VISIBILITY */
 .template {
     display: none;
 }

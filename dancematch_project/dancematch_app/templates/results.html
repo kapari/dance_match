@@ -3,55 +3,88 @@
 
 {% block content %}
 
-{% if all_prefs %}
-    <ul class="list">
-    {% for pref in all_prefs|dictsort:"dancer.name" %}
-        <li>
-            <a href="/profile/{{ pref.dancer.id }}/">{{ pref.dancer.name }}</a>
-           {{ pref.dance.name }} {{ pref.role.name }} ({{ pref.skill_level.name }})
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No dancers are available.</p>
-{% endif %}
+<script>
+    var user_id = {{ user.id }}
 
-<!--<table id="pref_list">-->
-    <!--<thead>-->
-        <!--<tr>-->
-            <!--<th>Dance</th>-->
-            <!--<th>Role</th>-->
-            <!--<th>Level</th>-->
-            <!-- -->
-        <!--</tr>-->
-    <!--</thead>-->
-    <!--<div class="template">-->
-        <!--<h3><span class="dance">Dance Style</span>: <span class="role">Role</span></h3>-->
-        <!--<p class="dancer">Dancer name</p>-->
-        <!--<p class="notes">Notes go here.</p>-->
-        <!--<table class="pref">-->
-            <!-- -->
-        <!--</table>-->
-    <!--</div>-->
-<!--</table>-->
+    function drawPrefs(data, user_id) {
+        var pl = document.getElementById("pref_list");
+        var template = pl.getElementsByClassName("template")[0];
 
+        for (var i = 0; i < data.length; i++) {
+            var current_pref = data[i];
 
-<!--{% regroup all_prefs by dance.name as all_prefs_list %}-->
+            if (current_pref.user_id != user_id) {
+                console.log("user_id " + user_id);
+                var clone = template.cloneNode(true);
+                clone.classList.remove("template");
+                clone.setAttribute("data-id", current_pref.id);
 
-<!--<ul>-->
-    <!--{% for dance in all_prefs_list %}-->
-    <!--<li>-->
-        <!--{{ dance.grouper }}-->
-        <!--<ul>-->
-            <!--{% for item in dance.list %}-->
-            <!--<li>-->
-                <!--{{ item.dancer.name }}: {{ item.role }}-->
-            <!--</li>-->
-            <!--{% endfor %}-->
-        <!--</ul>-->
-    <!--</li>-->
-    <!--{% endfor %}-->
-<!--</ul>-->
+                clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
+                clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
+                clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
+
+                if (current_pref.skill_level) {
+                    clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
+                } else {
+                    clone.getElementsByClassName("skill_level")[0].innerHTML = "";
+                }
+
+                if (current_pref.goal) {
+                    clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
+                } else {
+                    clone.getElementsByClassName("goal")[0].innerHTML = "";
+                }
+                clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+
+                pl.appendChild(clone);
+            }
+        }
+    }
+
+    // BEGIN WEB REST API CALL TO GET JSON DATA
+    function ApiCall(url, function_name) {
+        var request = new XMLHttpRequest();
+        request.open("GET", url);
+
+        //For pre html5 browsers use onstatuschanged
+        request.onloadend = function (e) {
+            var json_string = e.currentTarget.responseText;
+            var data = JSON.parse(json_string);
+            function_name(data, user_id);
+        };
+        request.send();
+    }
+
+    ApiCall("/api_dance_prefs/", drawPrefs);
+
+</script>
+
+<table>
+    <caption>
+            A listing of all dances uploaded by site users.
+    </caption>
+    <thead>
+        <tr>
+            <th id="name">Name</th>
+            <th id="dance">Dance</th>
+            <th id="role">Role</th>
+            <th id="skill_level">Level</th>
+            <th id="goal">Goal</th>
+            <th id="notes">Description</th>
+        </tr>
+    </thead>
+    <tbody id="pref_list">
+        <tr class="template">
+            <td headers="dancer" class="dancer">Dancer</td>
+            <td headers="dance" class="dance">Dance Style</td>
+            <td headers="role" class="role">Role</td>
+            <td headers="skill_level" class="skill_level">Skill Level</td>
+            <td headers="goal" class="goal">Goal</td>
+            <td headers="notes" class="notes">Notes here.</td>
+        </tr>
+    </tbody>
+</table>
+
 
 
 {% endblock %}
