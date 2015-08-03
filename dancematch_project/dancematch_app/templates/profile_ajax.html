@@ -71,6 +71,8 @@
         var profile = document.getElementById("profile");
         // only one dict in list
         var p_dict = data[0];
+        console.log(data);
+        console.log(p_dict);
         profile.getElementsByClassName("username")[0].innerText = p_dict["username"];
         profile.getElementsByClassName("first_name")[0].innerText = p_dict["first_name"];
         profile.getElementsByClassName("last_name")[0].innerText = p_dict["last_name"];
@@ -277,30 +279,21 @@
 
 
     // BEGIN WEB REST API CALL TO GET JSON DATA
-    var url = "/api_dance_prefs/";
-    var request = new XMLHttpRequest();
-    request.open("GET", url);
+    function ApiCall(url, function_name) {
+        var request = new XMLHttpRequest();
+        request.open("GET", url);
 
-    //For pre html5 browsers use onstatuschanged
-    request.onloadend = function (e) {
-        var json_string = e.currentTarget.responseText;
-        var data = JSON.parse(json_string);
-        draw(data, user_id);
-    };
+        //For pre html5 browsers use onstatuschanged
+        request.onloadend = function (e) {
+            var json_string = e.currentTarget.responseText;
+            var data = JSON.parse(json_string);
+            function_name(data, user_id);
+        };
+        request.send();
+    }
 
-    request.send();
-
-
-    // API call for profile data
-    url = "/api_profile/";
-    request = new XMLHttpRequest();
-    request.open("GET", url);
-
-    request.onloadend = function (e) {
-    var json_string = e.currentTarget.responseText;
-    var data = JSON.parse(json_string);
-    drawProfile(data, user_id);
-    };
+    ApiCall("/api_dance_prefs/", draw);
+    ApiCall("/api_profile/", drawProfile);
 
 
 </script>

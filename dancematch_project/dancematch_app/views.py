@@ -180,13 +180,13 @@ def api_dance_prefs(request):
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
 
-def api_profile(request, user_id):
-    user = get_object_or_404(User, id=user_id)
+def api_profile(request):
+    user = request.user
     dancer = user.dancer
     output = []
     profile_data = {}
     profile_data["id"] = user.id
-    profile_data["dancer"] = user.dancer
+    profile_data["dancer_id"] = user.dancer.id
     profile_data["username"] = user.username
     profile_data["first_name"] = user.first_name
     profile_data["last_name"] = user.last_name
