@@ -66,7 +66,7 @@
 
     }
 
-    // TODO: be able to pull info out of json; still need to set up edit/update functionality
+
     function drawProfile(data, user_id) {
         var profile = document.getElementById("profile");
         // only one dict in list
@@ -77,6 +77,18 @@
         profile.getElementsByClassName("first_name")[0].innerText = p_dict["first_name"];
         profile.getElementsByClassName("last_name")[0].innerText = p_dict["last_name"];
         profile.getElementsByClassName("bio")[0].innerText = p_dict["bio"];
+
+        // fill & hide edit fields
+        var edit_div = profile.getElementsByClassName("edit")[0];
+        edit_div.classList.add("hide");
+        profile.getElementsByClassName('edit_field')[0].value = p_dict["first_name"];
+        profile.getElementsByClassName('edit_field')[1].value = p_dict["last_name"];
+        profile.getElementsByClassName('edit_field')[2].value = p_dict["bio"];
+
+        add_profile_listeners();
+
+        toggle_button = profile.getElementsByClassName("edit_toggle")[0];
+        add_toggle_listener(toggle_button);
     }
 
 
@@ -159,6 +171,23 @@
 
     }
 
+    function add_profile_listeners() {
+        var profile = document.getElementById("profile");
+        var edit_fields = profile.getElementsByClassName('edit_field');
+        var update = {"user_id": user_id};
+
+        for (i = 0; i < edit_fields.length; i++) {
+            current_field = edit_fields[i];
+            current_field.addEventListener("change", function(e) {
+                var value = e.target.value;
+                var field_name = e.target.name;
+                update[field_name] = value;
+                profile.getElementsByClassName(field_name)[0].innerText = value;
+
+                sendPost(update, "/update_profile/")
+            });
+        }
+    }
 
     function add_listeners() {
         var pl = document.getElementById("pref_list");
@@ -202,7 +231,7 @@
                     pref_id_div.getElementsByClassName("notes")[0].innerText = value;
                 }
 
-                sendPost(update);
+                sendPost(update, "/update_pref/");
             });
         }
     }
@@ -242,7 +271,7 @@
 
 
     // AJAX POST
-    function sendPost(item) {
+    function sendPost(item, url) {
         var form_data = new FormData();
 
         for (var key in item) {
@@ -250,7 +279,7 @@
         }
 
         var request = new XMLHttpRequest();
-        request.open("POST", "/update_pref/");
+        request.open("POST", url);
         request.send(form_data);
     }
 
@@ -309,8 +338,8 @@
         <span class="bio">Bio goes here</span>
     </div>
     <div class="edit">
-        <input class="edit_field" type="text" name="fname" placeholder="First Name">
-        <input class="edit_field" type="text" name="lname" placeholder="Last Name">
+        <input class="edit_field" type="text" name="first_name" placeholder="First Name">
+        <input class="edit_field" type="text" name="last_lname" placeholder="Last Name">
         <textarea class="edit_field" name="bio" rows="4" cols="50" placeholder="Tell us about yourself!"></textarea>
     </div>
     <div>

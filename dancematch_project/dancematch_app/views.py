@@ -250,6 +250,7 @@ def profile_ajax(request):
     context = RequestContext(request, {})
     return HttpResponse(template.render(context))
 
+@csrf_exempt
 def update_profile(request):
     if request.POST:
         print(request.POST)
