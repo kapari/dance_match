@@ -127,7 +127,13 @@ select {
     /*-webkit-appearance: none;*/
 }
 
-button {
+.upload {
+    border: 1px solid #e88d67;
+    padding: 0.5em;
+}
+
+button, .button {
+    display: block;
     padding: 0.5em 1em;
     border: 1px solid #e88d67;
     background-color: #fff6f4;

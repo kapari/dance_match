@@ -341,6 +341,8 @@ def img_upload(request):
         dancer.img_path = path
         dancer.save()
 
+        return HttpResponseRedirect("/profile_ajax/")
+
     template = loader.get_template('upload.html')
     context = RequestContext(request, {})
     return HttpResponse(template.render(context))
