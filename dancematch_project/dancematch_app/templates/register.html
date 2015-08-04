@@ -11,6 +11,14 @@
 <form method="post">
     {% csrf_token %}
     <label>
+        <p>First Name</p>
+        <input name="first_name" type="text">
+    </label>
+    <label>
+        <p>Last Name</p>
+        <input name="last_name" type="text">
+    </label>
+    <label>
         <p>Email/Username</p>
         <input name="username" type="email">
     </label>

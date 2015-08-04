@@ -1,0 +1,24 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<script>
+    var user_id = {{ user.id }}
+    document.write("User ID: " + user_id);
+</script>
+
+<a href="/results/">See all dances</a>
+
+<h1>Upload an image</h1>
+
+<form method="post" enctype="multipart/form-data" action="/img_upload/">
+    {% csrf_token %}
+    <input type="file" class="form-control" name="file" accept="image/*">
+    <br>
+    <br>
+    <br>
+    <input type="submit" value="submit">
+</form>
+
+{% endblock %}

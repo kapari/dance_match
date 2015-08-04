@@ -3,11 +3,16 @@
 
 {% block content %}
 
+<script>
+    var user_id = {{ user.id }}
+    document.write("User ID: " + user_id);
+</script>
+
 <a href="/results/">See all dances</a>
 
 <h1>Welcome</h1>
 <p>This is the index page, yay.</p>
-<p><a href="/login/">Log in to your account.</a></p>
+<p class="login"><a href="/login/">Log in to your account.</a></p>
 <p><a href="/register/">Register for a new account.</a></p>
 
 {% endblock %}

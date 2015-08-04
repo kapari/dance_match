@@ -42,6 +42,8 @@ def register_view(request):
         user = User()
         user.username = request.POST['username']
         user.email = request.POST['username']
+        user.first_name = request.POST['first_name']
+        user.last_name = request.POST['last_name']
         user.set_password(request.POST['password'])
         user.save()
 
@@ -191,6 +193,7 @@ def api_profile(request):
     profile_data["first_name"] = user.first_name
     profile_data["last_name"] = user.last_name
     profile_data["bio"] = dancer.bio
+    profile_data["profile_img"] = dancer.img_path
     output.append(profile_data)
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
@@ -321,3 +324,23 @@ def update_pref(request):
         dance_pref.save()
 
         return HttpResponseRedirect("/profile_ajax/")
+
+
+def img_upload(request):
+    if request.POST:
+        print(request.FILES)
+        user_id = request.user.id
+        user = get_object_or_404(User, id=user_id)
+        dancer = user.dancer
+        image = request.FILES['file']
+        path = '/static/uploads/'+ str(user_id) + "_" + image.name
+        with open("dancematch_app" + path, 'wb+') as destination:
+            for chunk in image.chunks():
+                destination.write(chunk)
+            print(destination)
+        dancer.img_path = path
+        dancer.save()
+
+    template = loader.get_template('upload.html')
+    context = RequestContext(request, {})
+    return HttpResponse(template.render(context))

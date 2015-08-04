@@ -44,5 +44,6 @@ urlpatterns = [
     url(r'^update_profile/$', views.update_profile, name='update_profile'),
     # Login
     url(r'^login/$', views.login_view, name='login'),
-    url(r'^register/$', views.register_view, name='register')
+    url(r'^register/$', views.register_view, name='register'),
+    url(r'^img_upload/$', views.img_upload, name='img_upload')
 ]

@@ -75,6 +75,7 @@
         profile.getElementsByClassName("first_name")[0].innerText = p_dict["first_name"];
         profile.getElementsByClassName("last_name")[0].innerText = p_dict["last_name"];
         profile.getElementsByClassName("bio")[0].innerText = p_dict["bio"];
+        profile.getElementsByClassName("profile_img")[0].setAttribute('src', p_dict["profile_img"]);
 
         // fill & hide edit fields
         var edit_div = profile.getElementsByClassName("edit")[0];
@@ -334,6 +335,7 @@
         <span class="first_name">First Name</span>
         <span class="last_name">Last Name</span>
         <span class="bio">Bio goes here</span>
+        <img src="" class="profile_img">
     </div>
     <div class="edit">
         <input class="edit_field" type="text" name="first_name" placeholder="First Name">

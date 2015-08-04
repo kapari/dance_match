@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class Dancer(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField()
-    # photo = ImageField() https://docs.djangoproject.com/en/1.8/ref/models/fields/
+    img_path = models.CharField(max_length=200)
 
     def __str__(self):
         return "User ID: " + str(self.user.id) + str(self.user.first_name) + " " + str(self.user.last_name)
@@ -17,11 +17,6 @@ class Dancer(models.Model):
 class Dance(models.Model):
     name = models.CharField(default='', max_length=200)
     description = models.TextField(blank=True)
-    dance_community = models.ManyToManyField(
-        Dancer,
-        through='DancePrefs',
-        through_fields=('dance', 'dancer')
-    )
 
     def __str__(self):
         return self.name
