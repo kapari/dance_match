@@ -1,12 +1,13 @@
 from django.contrib import admin
-from models import (Dancer, Dance, Day, Time, Location, DancePrefs,
+from models import (Dancer, Dance, Day, Time, Venue, PreferredVenue, DancePrefs,
                     SkillLevel, Activity, Goals, DanceRole)
 
 admin.site.register(Dancer)
 admin.site.register(Dance)
 admin.site.register(Day)
 admin.site.register(Time)
-admin.site.register(Location)
+admin.site.register(Venue)
+admin.site.register(PreferredVenue)
 admin.site.register(DancePrefs)
 admin.site.register(SkillLevel)
 admin.site.register(Activity)

@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Dancer(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField()
     img_path = models.CharField(max_length=200)
-    location = models.ForeignKey(Location)
+    # zip_code = models.PositiveIntegerField(validators=[MinValueValidator(00000), MaxValueValidator(99999)])
 
     def __str__(self):
         return "User ID: " + str(self.user.id) + str(self.user.first_name) + " " + str(self.user.last_name)
@@ -78,17 +79,6 @@ class Day(models.Model):
 
 class Time(models.Model):
     name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class Location(models.Model):
-    name = models.CharField(max_length=200)
-    zip_code = models.IntegerField(min_value=00000, max_value=99999)
 
     def __str__(self):
         return self.name

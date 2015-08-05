@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 
-from .models import Dancer, Dance, Day, Time, Location, DancePrefs, SkillLevel, Goals, Activity, DanceRole
+from .models import Dancer, Dance, Day, Time, Venue, PreferredVenue, DancePrefs, SkillLevel, Goals, Activity, DanceRole
 
 import json
 
