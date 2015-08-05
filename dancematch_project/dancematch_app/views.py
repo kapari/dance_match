@@ -164,6 +164,7 @@ def api_dance_prefs(request):
         prefdata["id"] = pref.id
         prefdata["user_id"] = pref.dancer.user.id
         prefdata["user"] = pref.dancer.user.username
+        # prefdata["first_name"] = pref.user.first_name
         prefdata["dance_id"] = pref.dance.id
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id
@@ -178,6 +179,7 @@ def api_dance_prefs(request):
             prefdata["goal_id"] = pref.goal.id
             prefdata["goal"] = pref.goal.name
         prefdata["notes"] = pref.notes
+        prefdata["img_path"] = pref.dancer.img_path
         output.append(prefdata)
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')

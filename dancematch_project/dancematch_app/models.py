@@ -6,6 +6,7 @@ class Dancer(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField()
     img_path = models.CharField(max_length=200)
+    location = models.ForeignKey(Location)
 
     def __str__(self):
         return "User ID: " + str(self.user.id) + str(self.user.first_name) + " " + str(self.user.last_name)
@@ -87,13 +88,27 @@ class Time(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
-    # zip_code = models.IntegerField(min_value=00000, max_value=99999)
+    zip_code = models.IntegerField(min_value=00000, max_value=99999)
 
     def __str__(self):
         return self.name
 
     def __unicode__(self):
         return self.name
+
+
+class Venue(models.Model):
+    name = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=2)
+    # image = models.CharField(max_length=200)
+    # map = models.CharField(max_length=400)
+
+
+class PreferredVenue(models.Model):
+    dancer = models.ForeignKey(Dancer)
+    venue = models.ForeignKey(Venue)
 
 
 # class Messages(models.Model):

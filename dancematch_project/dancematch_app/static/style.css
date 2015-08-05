@@ -132,6 +132,19 @@ select {
     padding: 0.5em;
 }
 
+img.profile_img {
+    max-width: 200px;
+    max-height: 200px;
+    padding: 4px;
+    background-color: #fcfcfc;
+    border: 1px solid #e88d67;
+}
+
+.thumb {
+    max-width: 60px;
+    max-height: 60px;
+}
+
 button, .button {
     display: block;
     padding: 0.5em 1em;

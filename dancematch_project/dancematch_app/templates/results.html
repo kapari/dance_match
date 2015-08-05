@@ -17,10 +17,14 @@
                 console.log("user_id " + user_id);
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
+//                clone.classList.add("hide");
+
                 clone.setAttribute("data-id", current_pref.id);
 
+                clone.getElementsByClassName("thumb")[0].setAttribute('src', current_pref.img_path);
                 clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
                 clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
+                clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
                 clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
 
                 if (current_pref.skill_level) {
@@ -65,6 +69,7 @@
     </caption>
     <thead>
         <tr>
+            <th id="profile_img">Image</th>
             <th id="name">Name</th>
             <th id="dance">Dance</th>
             <th id="role">Role</th>
@@ -75,6 +80,9 @@
     </thead>
     <tbody id="pref_list">
         <tr class="template">
+            <td headers="profile_img" class="profile_img">
+                <img src="" class="thumb">
+            </td>
             <td headers="dancer" class="dancer">Dancer</td>
             <td headers="dance" class="dance">Dance Style</td>
             <td headers="role" class="role">Role</td>
