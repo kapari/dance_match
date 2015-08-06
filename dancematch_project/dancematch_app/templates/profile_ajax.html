@@ -14,21 +14,21 @@
     var models = {};
 
     function select_options(select, data, name_field, id_field, selected) {
-        var not_set = true;
+//        var not_set = true;
         for (var i = 0; i < data.length; i++) {
             var option = document.createElement('option');
             option.innerHTML = data[i][name_field];
             option.setAttribute("value", data[i][id_field]);
             if (data[i][name_field] == selected) {
                 option.setAttribute("selected", "selected");
-                not_set = false;
+//                not_set = false;
             }
             select.appendChild(option);
         }
-        if (not_set) {
-            option.innerHTML = "(optional)";
-            option.setAttribute("selected", "selected");
-        }
+//        if (not_set) {
+//            option.innerHTML = "(optional)";
+//            option.setAttribute("selected", "selected");
+//        }
     }
 
     // Draws select options in editable div of li
@@ -62,6 +62,13 @@
 //                        window.models["dance_list"], "name", "id", selected_dance);
         }
 
+    }
+
+    // Draws edit/new pref div
+    function drawEditPref(parent, current_pref, param, model_list_name) {
+        var selected = current_pref[param];
+        select_options(parent.getElementsByClassName(model_list_name)[0],
+                window.models[model_list_name], "name", "id", selected);
     }
 
 
@@ -112,50 +119,19 @@
                 clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
                 clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
                 clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
-
-                if (current_pref.skill_level) {
-                    clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
-                } else {
-                    clone.getElementsByClassName("skill_level")[0].innerHTML = "";
-                }
-
-                if (current_pref.activity) {
-                    clone.getElementsByClassName("activity")[0].innerHTML = current_pref.activity;
-                } else {
-                    clone.getElementsByClassName("activity")[0].innerHTML = "";
-                }
-
-                if (current_pref.goal) {
-                    clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
-                } else {
-                    clone.getElementsByClassName("goal")[0].innerHTML = "";
-                }
+                clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
+                clone.getElementsByClassName("activity")[0].innerHTML = current_pref.activity;
+                clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
                 clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
 
                 // Edit div
                 var edit_div = clone.getElementsByClassName("edit")[0];
                 edit_div.classList.add("hide");
-
-                var selected_dance = current_pref.dance;
-                select_options(clone.getElementsByClassName("dance_list")[0],
-                        window.models["dance_list"], "name", "id", selected_dance);
-
-                var selected_role = current_pref.role;
-                select_options(clone.getElementsByClassName("role_list")[0],
-                        window.models["role_list"], "name", "id", selected_role);
-
-                var selected_skill_level = current_pref.skill_level;
-                select_options(clone.getElementsByClassName("skill_level_list")[0],
-                            window.models["skill_level_list"], "name", "id", selected_skill_level);
-
-                var selected_activity = current_pref.activity;
-                select_options(clone.getElementsByClassName("activity_list")[0],
-                            window.models["activity_list"], "name", "id", selected_activity);
-
-                var selected_goal = current_pref.goal;
-                select_options(clone.getElementsByClassName("goal_list")[0],
-                            window.models["goal_list"], "name", "id", selected_goal);
-
+                drawEditPref(clone, current_pref, "dance", "dance_list");
+                drawEditPref(clone, current_pref, "role", "role_list");
+                drawEditPref(clone, current_pref, "skill_level", "skill_level_list");
+                drawEditPref(clone, current_pref, "activity", "activity_list");
+                drawEditPref(clone, current_pref, "goal", "goal_list");
                 clone.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 
                 toggle_button = clone.getElementsByClassName("edit_toggle")[0];
@@ -379,6 +355,21 @@
             </div>
         </li>
     </ul>
+</div>
+
+<div id="new_pref">
+    <div class="edit">
+        <select class="edit_field dance_list">Dance Style</select>
+        <select class="edit_field role_list">Role</select>
+        <select class="edit_field skill_level_list">Skill Level</select>
+        <select class="edit_field activity_list">Activity Level</select>
+        <select class="edit_field goal_list">Goal</select>
+        <textarea class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>
+    </div>
+    <div>
+        <button class="">Save</button>
+        <button class="">Cancel</button>
+    </div>
 </div>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}

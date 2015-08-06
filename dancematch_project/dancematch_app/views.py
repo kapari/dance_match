@@ -165,19 +165,17 @@ def api_dance_prefs(request):
         prefdata["user_id"] = pref.dancer.user.id
         prefdata["user"] = pref.dancer.user.username
         # prefdata["first_name"] = pref.user.first_name
+        # prefdata["last_name"] = pref.user.last_name
         prefdata["dance_id"] = pref.dance.id
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id
         prefdata["role"] = pref.role.name
-        if pref.skill_level:
-            prefdata["skill_level_id"] = pref.skill_level.id
-            prefdata["skill_level"] = pref.skill_level.name
-        if pref.activity:
-            prefdata["activity_id"] = pref.activity.id
-            prefdata["activity"] = pref.activity.name
-        if pref.goal:
-            prefdata["goal_id"] = pref.goal.id
-            prefdata["goal"] = pref.goal.name
+        prefdata["skill_level_id"] = pref.skill_level.id
+        prefdata["skill_level"] = pref.skill_level.name
+        prefdata["activity_id"] = pref.activity.id
+        prefdata["activity"] = pref.activity.name
+        prefdata["goal_id"] = pref.goal.id
+        prefdata["goal"] = pref.goal.name
         prefdata["notes"] = pref.notes
         prefdata["img_path"] = pref.dancer.img_path
         output.append(prefdata)

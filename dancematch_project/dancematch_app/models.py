@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class Dancer(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField()
-    img_path = models.CharField(max_length=200)
+    img_path = models.CharField(max_length=200, default="/statc/uploads/default.png")
     # zip_code = models.PositiveIntegerField(validators=[MinValueValidator(00000), MaxValueValidator(99999)])
 
     def __str__(self):
@@ -111,9 +111,9 @@ class DancePrefs(models.Model):
     dance = models.ForeignKey(Dance)
     dancer = models.ForeignKey(Dancer)
     role = models.ForeignKey(DanceRole)
-    skill_level = models.ForeignKey(SkillLevel, null=True)
-    activity = models.ForeignKey(Activity, null=True)
-    goal = models.ForeignKey(Goals, null=True)
+    skill_level = models.ForeignKey(SkillLevel, default=1)
+    activity = models.ForeignKey(Activity, default=1)
+    goal = models.ForeignKey(Goals, default=1)
     notes = models.TextField(blank=True)
 
     def __str__(self):
