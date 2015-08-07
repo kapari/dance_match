@@ -14,61 +14,41 @@
     var models = {};
 
     function select_options(select, data, name_field, id_field, selected) {
-//        var not_set = true;
         for (var i = 0; i < data.length; i++) {
             var option = document.createElement('option');
             option.innerHTML = data[i][name_field];
             option.setAttribute("value", data[i][id_field]);
-            if (data[i][name_field] == selected) {
+            if ((selected != null) && (data[i][name_field] == selected)) {
                 option.setAttribute("selected", "selected");
-//                not_set = false;
             }
             select.appendChild(option);
         }
-//        if (not_set) {
-//            option.innerHTML = "(optional)";
-//            option.setAttribute("selected", "selected");
-//        }
     }
 
     // Draws select options in editable div of li
-    function draw_selects(clone, current_pref) {
-        var model_lists = ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"];
-        for (i = 0; i < model_lists.length; i++) {
-            current_model = model_lists[i];
-            select_options(clone.getElementsByClassName(current_model)[0],
-                    window.models[current_model], "name", "id", current_pref.current_model);
-        }
+    function drawPrefRead(parent, current_pref) {
+        parent.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
+        parent.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
+        parent.getElementsByClassName("role")[0].innerHTML = current_pref.role;
+        parent.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
+        parent.getElementsByClassName("activity")[0].innerHTML = current_pref.activity;
+        parent.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
+        parent.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
     }
 
 
-    // Draws each pref li in template
-    function draw_list(clone, current_pref) {
-        var models = ["dancer", "dance", "role", "skill_level", "activity", "goal", "notes"];
-        for (i = 0; i < models.length; i++) {
-            var current_model = models[i];
-            var current_li = clone.getElementsByClassName(current_model)[0];
-            current_li.setAttribute("data-model", current_model);
-            // For optional fields:
-            if (current_pref.current_model) {
-                current_li.innerHTML = current_pref.current_model;
-            } else {
-                current_li.innerHTML = "";
-            }
-            // For corresponding edit div, not including notes
-//            draw_selects(clone, current_pref);
-//            var selected_dance = current_pref.dance;
-//                select_options(clone.getElementsByClassName("dance_list")[0],
-//                        window.models["dance_list"], "name", "id", selected_dance);
-        }
-
-    }
-
-    // Draws edit/new pref div
-    function drawEditPref(parent, current_pref, param, model_list_name) {
-        var selected = current_pref[param];
-        select_options(parent.getElementsByClassName(model_list_name)[0],
-                window.models[model_list_name], "name", "id", selected);
+    function drawPrefEdit(parent, current_pref) {
+        select_options(parent.getElementsByClassName("dance_list")[0],
+                    window.models["dance_list"], "name", "id", current_pref["dance"]);
+        select_options(parent.getElementsByClassName("role_list")[0],
+                    window.models["role_list"], "name", "id", current_pref["role"]);
+        select_options(parent.getElementsByClassName("skill_level_list")[0],
+                    window.models["skill_level_list"], "name", "id", current_pref["skill_level"]);
+        select_options(parent.getElementsByClassName("activity_list")[0],
+                    window.models["activity_list"], "name", "id", current_pref["activity"]);
+        select_options(parent.getElementsByClassName("goal_list")[0],
+                    window.models["goal_list"], "name", "id", current_pref["goal"]);
+        parent.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
     }
 
 
@@ -98,53 +78,36 @@
     }
 
 
-    function draw(data, user_id) {
+    function drawPrefs(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
         console.log(data);
 
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
-//            console.log("current pref:");
-//            console.log(current_pref);
             if (!user_id || current_pref.user_id == user_id) {
                 console.log("user_id " + user_id);
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
                 clone.setAttribute("data-id", current_pref.id);
-                // draws li with read-only and edit divs, not incl. last textarea
-//                draw_list(clone, current_pref);
 
                 // Read-only div
-                clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
-                clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
-                clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
-                clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
-                clone.getElementsByClassName("activity")[0].innerHTML = current_pref.activity;
-                clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
-                clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+                drawPrefRead(clone, current_pref);
 
                 // Edit div
                 var edit_div = clone.getElementsByClassName("edit")[0];
                 edit_div.classList.add("hide");
-                drawEditPref(clone, current_pref, "dance", "dance_list");
-                drawEditPref(clone, current_pref, "role", "role_list");
-                drawEditPref(clone, current_pref, "skill_level", "skill_level_list");
-                drawEditPref(clone, current_pref, "activity", "activity_list");
-                drawEditPref(clone, current_pref, "goal", "goal_list");
-                clone.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
+                drawPrefEdit(clone, current_pref);
 
                 toggle_button = clone.getElementsByClassName("edit_toggle")[0];
                 add_toggle_listener(toggle_button);
 
                 pl.appendChild(clone);
             }
-
         }
-//        document.body.innerHTML = data
         add_listeners();
-
     }
+
 
     function add_profile_listeners() {
         var profile = document.getElementById("profile");
@@ -163,6 +126,7 @@
             });
         }
     }
+
 
     function add_listeners() {
         var pl = document.getElementById("pref_list");
@@ -226,7 +190,6 @@
         return text;
     }
 
-
     // Show/hide
     function add_toggle_listener(button) {
         button.addEventListener("click", function(e) {
@@ -243,7 +206,6 @@
             }
         });
     }
-
 
     // AJAX POST
     function sendPost(item, url) {
@@ -282,6 +244,24 @@
     model_api("goal_list");
 
 
+    function newPref(user_id) {
+        var div = document.getElementById("new_pref");
+        var new_pref = {};
+        drawPrefRead(div, new_pref);
+        drawPrefEdit(div, new_pref);
+
+        var save = document.getElementsByClassName("save_pref");
+        save.addEventListener("click", function(e) {
+            var new_pref = {"user_id": user_id,
+                   "pref_id": 0};
+            sendPost(new_pref, "/update_pref/")
+        });
+        var cancel = document.getElementsByClassName("cancel_pref");
+        cancel.addEventListener("click", function(e) {
+            div.classList.add("hide");
+        });
+    }
+
     // BEGIN WEB REST API CALL TO GET JSON DATA
     function ApiCall(url, function_name) {
         var request = new XMLHttpRequest();
@@ -296,9 +276,12 @@
         request.send();
     }
 
-    ApiCall("/api_dance_prefs/", draw);
-    ApiCall("/api_profile/", drawProfile);
-
+    document.addEventListener("DOMContentLoaded", function(e) {
+                ApiCall("/api_dance_prefs/", drawPrefs);
+                ApiCall("/api_profile/", drawProfile);
+                newPref(user_id);
+        }
+    );
 
 </script>
 
@@ -330,6 +313,8 @@
 
 <a href="/edit/{{ user.id }}/0/">Add a new dance</a>
 
+<button class="new_pref_btn">Add a new dance</button>
+
 <div id="pref_list">
     <ul class="pref">
         <li class="selected template">
@@ -358,17 +343,15 @@
 </div>
 
 <div id="new_pref">
-    <div class="edit">
-        <select class="edit_field dance_list">Dance Style</select>
-        <select class="edit_field role_list">Role</select>
-        <select class="edit_field skill_level_list">Skill Level</select>
-        <select class="edit_field activity_list">Activity Level</select>
-        <select class="edit_field goal_list">Goal</select>
-        <textarea class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>
-    </div>
+    <!--<select class="edit_field dance_list">Dance Style</select>-->
+    <!--<select class="edit_field role_list">Role</select>-->
+    <!--<select class="edit_field skill_level_list">Skill Level</select>-->
+    <!--<select class="edit_field activity_list">Activity Level</select>-->
+    <!--<select class="edit_field goal_list">Goal</select>-->
+    <!--<textarea class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>-->
     <div>
-        <button class="">Save</button>
-        <button class="">Cancel</button>
+        <button class="save_pref">Save</button>
+        <button class="cancel_pref">Cancel</button>
     </div>
 </div>
 

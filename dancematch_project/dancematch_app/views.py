@@ -164,8 +164,8 @@ def api_dance_prefs(request):
         prefdata["id"] = pref.id
         prefdata["user_id"] = pref.dancer.user.id
         prefdata["user"] = pref.dancer.user.username
-        # prefdata["first_name"] = pref.user.first_name
-        # prefdata["last_name"] = pref.user.last_name
+        prefdata["first_name"] = pref.dancer.user.first_name
+        prefdata["last_name"] = pref.dancer.user.last_name
         prefdata["dance_id"] = pref.dance.id
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id
