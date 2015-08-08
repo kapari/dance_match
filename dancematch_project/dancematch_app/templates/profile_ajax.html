@@ -78,11 +78,7 @@
     }
 
 
-    function drawPrefs(data, user_id) {
-        var pl = document.getElementById("pref_list");
-        var template = pl.getElementsByClassName("template")[0];
-        console.log(data);
-
+    function drawPrefList(parent, template, data, user_id) {
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
             if (!user_id || current_pref.user_id == user_id) {
@@ -102,10 +98,19 @@
                 toggle_button = clone.getElementsByClassName("edit_toggle")[0];
                 add_toggle_listener(toggle_button);
 
-                pl.appendChild(clone);
+                parent.appendChild(clone);
             }
         }
-        add_listeners();
+    }
+
+
+    function drawPrefs(data, user_id) {
+        var pl = document.getElementById("pref_list");
+        var template = pl.getElementsByClassName("template")[0];
+        // console.log(data);
+
+        drawPrefList(pl, template, data, user_id);
+        addPrefListeners("pref_list");
     }
 
 
@@ -128,8 +133,8 @@
     }
 
 
-    function add_listeners() {
-        var pl = document.getElementById("pref_list");
+    function addPrefListeners(parent_id) {
+        var pl = document.getElementById(parent_id);
         var edit_fields = pl.getElementsByClassName("edit_field");
         for (i = 0; i < edit_fields.length; i++) {
             var current_field = edit_fields[i];
@@ -220,6 +225,8 @@
         request.send(form_data);
     }
 
+    var api_counter = 0;
+    var api_loaded = false;
     function model_api(object_type) {
         // get list of e.g. dances for dropdown
         var url = "/api_" + object_type + "/";
@@ -232,32 +239,58 @@
             var json_string = e.currentTarget.responseText;
             var data = JSON.parse(json_string);
             window.models[object_type] = data;
+            api_counter++;
+            console.log(object_type + ": " + api_counter);
+            console.log(model_list.length);
+            if (api_counter == model_list.length) {
+                api_loaded = true;
+            }
         };
 
         request.send();
     }
 
-    model_api("dance_list");
-    model_api("role_list");
-    model_api("skill_level_list");
-    model_api("activity_list");
-    model_api("goal_list");
+    var model_list = ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"]
+    for (i = 0; i < model_list.length; i++) {
+        model_api(model_list[i]);
+    }
+
 
 
     function newPref(user_id) {
-        var div = document.getElementById("new_pref");
-        var new_pref = {};
-        drawPrefRead(div, new_pref);
-        drawPrefEdit(div, new_pref);
+        if (!api_loaded) {
+            setTimeout(newPref, 100, user_id);
+            console.log("waiting...");
+            return
+        }
+        var parent = document.getElementById("new_pref");
+        var template = document.getElementsByClassName("template")[0];
+        var clone = template.cloneNode(true);
 
-        var save = document.getElementsByClassName("save_pref");
-        save.addEventListener("click", function(e) {
-            var new_pref = {"user_id": user_id,
-                   "pref_id": 0};
+        var btn_div = parent.getElementsByClassName("btn_div")[0];
+        clone.classList.remove("template");
+        parent.insertBefore(clone, btn_div);
+
+        var new_pref_id = 0;
+        var new_pref = {"user_id": user_id,
+                        "pref_id": new_pref_id,
+                        "dance": 1,
+                        "role": 1,
+                        "skill_level": 1,
+                        "activity": 1,
+                        "goal": 1,
+                        "notes": ''
+                        };
+
+        drawPrefRead(parent, new_pref);
+        drawPrefEdit(parent, new_pref);
+
+        var button = parent.getElementsByClassName("save_pref");
+        button.addEventListener("click", function(e) {
             sendPost(new_pref, "/update_pref/")
         });
-        var cancel = document.getElementsByClassName("cancel_pref");
-        cancel.addEventListener("click", function(e) {
+        var cancel_btn = document.getElementsByClassName("cancel_pref");
+        cancel_btn.addEventListener("click", function(e) {
             div.classList.add("hide");
         });
     }
@@ -279,6 +312,16 @@
     document.addEventListener("DOMContentLoaded", function(e) {
                 ApiCall("/api_dance_prefs/", drawPrefs);
                 ApiCall("/api_profile/", drawProfile);
+//                if (api_loaded) {
+//                    newPref(user_id);
+//                } else {
+//                    setTimeout(function(){
+//                        newPref(user_id)
+//                    }, 5000);
+//                }
+//                while (!api_loaded) {
+//                    console.log("waiting...");
+//                }
                 newPref(user_id);
         }
     );
@@ -304,7 +347,7 @@
         <input class="edit_field" type="text" name="last_name" placeholder="Last Name">
         <textarea class="edit_field" name="bio" rows="4" cols="50" placeholder="Tell us about yourself!"></textarea>
     </div>
-    <div>
+    <div class="btn_div">
         <button class="edit_toggle">Edit</button>
     </div>
 </div>
@@ -343,13 +386,7 @@
 </div>
 
 <div id="new_pref">
-    <!--<select class="edit_field dance_list">Dance Style</select>-->
-    <!--<select class="edit_field role_list">Role</select>-->
-    <!--<select class="edit_field skill_level_list">Skill Level</select>-->
-    <!--<select class="edit_field activity_list">Activity Level</select>-->
-    <!--<select class="edit_field goal_list">Goal</select>-->
-    <!--<textarea class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>-->
-    <div>
+    <div class="btn_div">
         <button class="save_pref">Save</button>
         <button class="cancel_pref">Cancel</button>
     </div>
