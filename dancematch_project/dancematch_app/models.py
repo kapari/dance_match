@@ -7,7 +7,6 @@ class Dancer(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField()
     img_path = models.CharField(max_length=200, default="/statc/uploads/default.png")
-    # zip_code = models.PositiveIntegerField(validators=[MinValueValidator(00000), MaxValueValidator(99999)])
 
     def __str__(self):
         return "User ID: " + str(self.user.id) + str(self.user.first_name) + " " + str(self.user.last_name)
@@ -106,6 +105,12 @@ class PreferredVenue(models.Model):
     dancer = models.ForeignKey(Dancer)
     venue = models.ForeignKey(Venue)
 
+    def __str__(self):
+        return self.dancer + " prefers " + self.name
+
+    def __unicode__(self):
+        return self.dancer + " prefers " + self.name
+
 
 class MajorCity(models.Model):
     name = models.CharField(max_length=200)
@@ -122,13 +127,13 @@ class Suburb(models.Model):
     hub = models.ForeignKey(MajorCity)
 
     def __str__(self):
-        return self.hub + ": " + self.name
+        return self.hub.name + ": " + self.name
 
     def __unicode__(self):
-        return self.hub + ": " + self.name
+        return self.hub.name + ": " + self.name
 
 
-class PreferredSuburbs(models.Model):
+class PreferredSuburb(models.Model):
     dancer = models.ForeignKey(Dancer)
     suburb = models.ForeignKey(Suburb)
 

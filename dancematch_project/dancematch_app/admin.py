@@ -1,6 +1,6 @@
 from django.contrib import admin
 from models import (Dancer, Dance, Day, Time, Venue, PreferredVenue, DancePrefs,
-                    SkillLevel, Activity, Goals, DanceRole)
+                    SkillLevel, Activity, Goals, DanceRole, MajorCity, Suburb, PreferredSuburb)
 
 admin.site.register(Dancer)
 admin.site.register(Dance)
@@ -13,3 +13,6 @@ admin.site.register(SkillLevel)
 admin.site.register(Activity)
 admin.site.register(Goals)
 admin.site.register(DanceRole)
+admin.site.register(MajorCity)
+admin.site.register(Suburb)
+admin.site.register(PreferredSuburb)
