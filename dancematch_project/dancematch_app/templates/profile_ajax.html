@@ -5,49 +5,54 @@
 
 
 <script>
+    // TODO pull js into separate files
     var user_id = {{ user.id }}
     var dancer_id = {{ user.dancer.id }}
+    var models = {};
+
+    // TODO: finish implementing namespace
+    var DM = {
+        model_list: ["dance", "role", "skill_level", "activity", "goal"],
+        model_list_list: ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"]
+//        model: {
+//            items: []
+//        }
+    };
 
     document.write("test for user ID: " + user_id + " -- dancer ID: " + dancer_id);
     // Draw Loaded Data
 
-    var models = {};
 
-    function select_options(select, data, name_field, id_field, selected) {
+    function drawDropdown(select, data, name_field, id_field, selected) {
         for (var i = 0; i < data.length; i++) {
             var option = document.createElement('option');
             option.innerHTML = data[i][name_field];
             option.setAttribute("value", data[i][id_field]);
-            if ((selected != null) && (data[i][name_field] == selected)) {
+            if (data[i][name_field] == selected) {
                 option.setAttribute("selected", "selected");
             }
             select.appendChild(option);
         }
     }
 
-    // Draws select options in editable div of li
+
     function drawPrefRead(parent, current_pref) {
-        parent.getElementsByClassName("dancer")[0].innerHTML = current_pref.user_id;
-        parent.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
-        parent.getElementsByClassName("role")[0].innerHTML = current_pref.role;
-        parent.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
-        parent.getElementsByClassName("activity")[0].innerHTML = current_pref.activity;
-        parent.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
+        var models = DM.model_list;
+        for (i = 0; i < models.length; i++) {
+            console.log(models[i]);
+            parent.getElementsByClassName(models[i])[0].innerHTML = current_pref[models[i]];
+        }
         parent.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
     }
 
 
     function drawPrefEdit(parent, current_pref) {
-        select_options(parent.getElementsByClassName("dance_list")[0],
-                    window.models["dance_list"], "name", "id", current_pref["dance"]);
-        select_options(parent.getElementsByClassName("role_list")[0],
-                    window.models["role_list"], "name", "id", current_pref["role"]);
-        select_options(parent.getElementsByClassName("skill_level_list")[0],
-                    window.models["skill_level_list"], "name", "id", current_pref["skill_level"]);
-        select_options(parent.getElementsByClassName("activity_list")[0],
-                    window.models["activity_list"], "name", "id", current_pref["activity"]);
-        select_options(parent.getElementsByClassName("goal_list")[0],
-                    window.models["goal_list"], "name", "id", current_pref["goal"]);
+        var models = DM.model_list;
+        var model_lists = DM.model_list_list;
+        for (i = 0; i < models.length; i++) {
+            drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
+                    window.models[model_lists[i]], "name", "id", current_pref[models[i]]);
+        }
         parent.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
     }
 
@@ -55,32 +60,34 @@
     function drawProfile(data, user_id) {
         var profile = document.getElementById("profile");
         // only one dict in list
-        var p_dict = data[0];
+        var profile_data = data[0];
         console.log(data);
-        console.log(p_dict);
-        profile.getElementsByClassName("username")[0].innerText = p_dict["username"];
-        profile.getElementsByClassName("first_name")[0].innerText = p_dict["first_name"];
-        profile.getElementsByClassName("last_name")[0].innerText = p_dict["last_name"];
-        profile.getElementsByClassName("bio")[0].innerText = p_dict["bio"];
-        profile.getElementsByClassName("profile_img")[0].setAttribute('src', p_dict["profile_img"]);
+        console.log(profile_data);
+        profile.getElementsByClassName("username")[0].innerText = profile_data["username"];
+        profile.getElementsByClassName("first_name")[0].innerText = profile_data["first_name"];
+        profile.getElementsByClassName("last_name")[0].innerText = profile_data["last_name"];
+        profile.getElementsByClassName("bio")[0].innerText = profile_data["bio"];
+        profile.getElementsByClassName("profile_img")[0].setAttribute('src', profile_data["profile_img"]);
 
         // fill & hide edit fields
         var edit_div = profile.getElementsByClassName("edit")[0];
         edit_div.classList.add("hide");
-        profile.getElementsByClassName('edit_field')[0].value = p_dict["first_name"];
-        profile.getElementsByClassName('edit_field')[1].value = p_dict["last_name"];
-        profile.getElementsByClassName('edit_field')[2].value = p_dict["bio"];
+        profile.getElementsByClassName('edit_field')[0].value = profile_data["first_name"];
+        profile.getElementsByClassName('edit_field')[1].value = profile_data["last_name"];
+        profile.getElementsByClassName('edit_field')[2].value = profile_data["bio"];
 
-        add_profile_listeners();
+        addProfileListeners();
 
         toggle_button = profile.getElementsByClassName("edit_toggle")[0];
-        add_toggle_listener(toggle_button);
+        addToggleListener(toggle_button);
     }
 
 
     function drawPrefList(parent, template, data, user_id) {
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
+
+            // Draw pref only if user id matches current user
             if (!user_id || current_pref.user_id == user_id) {
                 console.log("user_id " + user_id);
                 var clone = template.cloneNode(true);
@@ -96,7 +103,7 @@
                 drawPrefEdit(clone, current_pref);
 
                 toggle_button = clone.getElementsByClassName("edit_toggle")[0];
-                add_toggle_listener(toggle_button);
+                addToggleListener(toggle_button);
 
                 parent.appendChild(clone);
             }
@@ -104,17 +111,16 @@
     }
 
 
-    function drawPrefs(data, user_id) {
+    function drawPrefItems(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
-        // console.log(data);
 
         drawPrefList(pl, template, data, user_id);
         addPrefListeners("pref_list");
     }
 
 
-    function add_profile_listeners() {
+    function addProfileListeners() {
         var profile = document.getElementById("profile");
         var edit_fields = profile.getElementsByClassName('edit_field');
         var update = {"user_id": user_id};
@@ -132,13 +138,18 @@
         }
     }
 
+    function onPrefUpdate(e) {
+
+    }
 
     function addPrefListeners(parent_id) {
-        var pl = document.getElementById(parent_id);
-        var edit_fields = pl.getElementsByClassName("edit_field");
+        var pref_list = document.getElementById(parent_id);
+        var edit_fields = pref_list.getElementsByClassName("edit_field");
         for (i = 0; i < edit_fields.length; i++) {
             var current_field = edit_fields[i];
             console.log("current field = " + current_field);
+
+            // TODO: pull out anonymous function; too long
             current_field.addEventListener("change", function (e) {
                 var group_div = e.target.parentElement;
                 var pref_id_div = group_div.parentElement;
@@ -150,25 +161,27 @@
                 var text = '';
 
                 // Build update dict & Change values in read-only
+                // TODO: loop
+
                 if (e.target.classList.contains("dance_list")) {
                     update["dance"] = value;
-                    text = get_new_option(value, "dance_list");
+                    text = updateReadOnly(value, "dance_list");
                     pref_id_div.getElementsByClassName("dance")[0].innerText = text;
                 } else if (e.target.classList.contains("role_list")){
                     update["role"] = value;
-                    text = get_new_option(value, "role_list");
+                    text = updateReadOnly(value, "role_list");
                     pref_id_div.getElementsByClassName("role")[0].innerText = text;
                 } else if (e.target.classList.contains("skill_level_list")){
                     update["skill_level"] = value;
-                    text = get_new_option(value, "skill_level_list");
+                    text = updateReadOnly(value, "skill_level_list");
                     pref_id_div.getElementsByClassName("skill_level")[0].innerText = text;
                 } else if (e.target.classList.contains("activity_list")){
                     update["activity"] = value;
-                    text = get_new_option(value, "activity_list");
+                    text = updateReadOnly(value, "activity_list");
                     pref_id_div.getElementsByClassName("activity")[0].innerText = text;
                 } else if (e.target.classList.contains("goal_list")){
                     update["goal"] = value;
-                    text = get_new_option(value, "goal_list");
+                    text = updateReadOnly(value, "goal_list");
                     pref_id_div.getElementsByClassName("goal")[0].innerText = text;
                 } else if (e.target.classList.contains("notes_textarea")){
                     update["notes"] = value;
@@ -180,8 +193,8 @@
         }
     }
 
-    // Update read-only values
-    function get_new_option(value, model) {
+
+    function updateReadOnly(value, model) {
         var option_list = window.models[model];
         var option_count = option_list.length;
         var text = "NOPE";
@@ -196,7 +209,7 @@
     }
 
     // Show/hide
-    function add_toggle_listener(button) {
+    function addToggleListener(button) {
         button.addEventListener("click", function(e) {
             var pref_li = button.parentElement.parentElement;
             var edit_div = pref_li.getElementsByClassName("edit")[0];
@@ -225,9 +238,10 @@
         request.send(form_data);
     }
 
+    // TODO: wrap all api calls together
     var api_counter = 0;
     var api_loaded = false;
-    function model_api(object_type) {
+    function modelApi(object_type) {
         // get list of e.g. dances for dropdown
         var url = "/api_" + object_type + "/";
         var request = new XMLHttpRequest();
@@ -246,17 +260,16 @@
                 api_loaded = true;
             }
         };
-
         request.send();
     }
 
-    var model_list = ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"]
+    var model_list = DM.model_list_list;
     for (i = 0; i < model_list.length; i++) {
-        model_api(model_list[i]);
+        modelApi(model_list[i]);
     }
 
 
-
+    // TODO: run on button click; break into smaller functions
     function newPref(user_id) {
         if (!api_loaded) {
             setTimeout(newPref, 100, user_id);
@@ -310,7 +323,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", function(e) {
-                ApiCall("/api_dance_prefs/", drawPrefs);
+                ApiCall("/api_dance_prefs/", drawPrefItems);
                 ApiCall("/api_profile/", drawProfile);
 //                if (api_loaded) {
 //                    newPref(user_id);
@@ -325,6 +338,8 @@
                 newPref(user_id);
         }
     );
+
+    // TODO: Init: create namespace, gather data, draw things, add listeners
 
 </script>
 
@@ -368,7 +383,6 @@
                 <span class="activity">Activity Level</span>
                 <span class="goal">Goal</span>
                 <span class="notes">Notes here.</span>
-                <span class="dancer">Dancer name</span>
             </div>
             <div class="edit">
                 <select class="edit_field dance_list">Dance Style</select>
@@ -385,6 +399,7 @@
     </ul>
 </div>
 
+<!--TODO: Move new pref li into pref list? Fix db posting. Hide and show on btn click.-->
 <div id="new_pref">
     <div class="btn_div">
         <button class="save_pref">Save</button>

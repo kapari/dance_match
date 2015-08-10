@@ -118,6 +118,7 @@ def edit_dance(request, user_id, dance_pref_id):
         dance_pref.role = role
 
         skill_level_id = request.POST.get("skill_level")
+        # TODO remove ifs
         if skill_level_id:
             skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
             dance_pref.skill_level = skill_level

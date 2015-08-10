@@ -95,10 +95,42 @@ class Venue(models.Model):
     # image = models.CharField(max_length=200)
     # map = models.CharField(max_length=400)
 
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
 
 class PreferredVenue(models.Model):
     dancer = models.ForeignKey(Dancer)
     venue = models.ForeignKey(Venue)
+
+
+class MajorCity(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class Suburb(models.Model):
+    name = models.CharField(max_length=200)
+    hub = models.ForeignKey(MajorCity)
+
+    def __str__(self):
+        return self.hub + ": " + self.name
+
+    def __unicode__(self):
+        return self.hub + ": " + self.name
+
+
+class PreferredSuburbs(models.Model):
+    dancer = models.ForeignKey(Dancer)
+    suburb = models.ForeignKey(Suburb)
 
 
 # class Messages(models.Model):
