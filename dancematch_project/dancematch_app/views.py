@@ -175,6 +175,19 @@ def api_dance_prefs(request):
         prefdata["goal"] = pref.goal.name
         prefdata["notes"] = pref.notes
         prefdata["img_path"] = pref.dancer.img_path
+        prefdata["suburbs"] = []
+
+        dancer = get_object_or_404(Dancer, pk=pref.dancer.id)
+        user_suburbs = PreferredSuburb.objects.filter(dancer=dancer)
+        for pref_suburb in user_suburbs:
+            subdata = {}
+            subdata["id"] = pref_suburb.id
+            subdata["sub_id"] = pref_suburb.suburb.id
+            subdata["sub_name"] = pref_suburb.suburb.name
+            subdata["hub_id"] = pref_suburb.suburb.hub.id
+            subdata["hub"] = pref_suburb.suburb.hub.name
+            prefdata["suburbs"].append(subdata)
+
         output.append(prefdata)
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
@@ -202,10 +215,11 @@ def api_suburbs(request):
     for pref_suburb in preferred_suburbs:
         subdata = {}
         subdata["user_id"] = pref_suburb.dancer.user.id
-        subdata["id"] = pref_suburb.suburb.id
-        subdata["name"] = pref_suburb.suburb.name
+        subdata["id"] = pref_suburb.id
+        subdata["sub_id"] = pref_suburb.suburb.id
+        subdata["sub_name"] = pref_suburb.suburb.name
         subdata["hub_id"] = pref_suburb.suburb.hub.id
-        subdata["hub"] = pref_suburb.suburb.hub.name
+        subdata["hub_name"] = pref_suburb.suburb.hub.name
         output.append(subdata)
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')

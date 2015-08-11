@@ -6,6 +6,11 @@
 <script>
     var user_id = {{ user.id }}
 
+    // TODO write filter
+    function filterPrefs(data, user_id) {
+
+    }
+
     function drawPrefs(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
@@ -26,19 +31,25 @@
                 clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
                 clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
                 clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
-
-                if (current_pref.skill_level) {
-                    clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
-                } else {
-                    clone.getElementsByClassName("skill_level")[0].innerHTML = "";
-                }
-
-                if (current_pref.goal) {
-                    clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
-                } else {
-                    clone.getElementsByClassName("goal")[0].innerHTML = "";
-                }
+                clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
+                clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
                 clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+
+                // TODO show only suburbs that match current user's prefs
+                var location_cell = clone.getElementsByClassName("suburbs")[0];
+                var suburb_list = current_pref.suburbs;
+
+                if (suburb_list.length > 0) {
+                    for (var j = 0; j < suburb_list.length; j++) {
+                        console.log(suburb_list[j].sub_name);
+                        var name_span = document.createElement("span");
+                        name_span.innerHTML += suburb_list[j].sub_name;
+                        location_cell.appendChild(name_span);
+                    }
+                } else {
+                    location_cell.innerHTML += '';
+                }
+
 
                 pl.appendChild(clone);
             }
@@ -76,6 +87,7 @@
             <th id="skill_level">Level</th>
             <th id="goal">Goal</th>
             <th id="notes">Description</th>
+            <th id="location">Location Match</th>
         </tr>
     </thead>
     <tbody id="pref_list">
@@ -89,6 +101,7 @@
             <td headers="skill_level" class="skill_level">Skill Level</td>
             <td headers="goal" class="goal">Goal</td>
             <td headers="notes" class="notes">Notes here.</td>
+            <td headers="location" class="suburbs"></td>
         </tr>
     </tbody>
 </table>
