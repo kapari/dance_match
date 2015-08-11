@@ -49,6 +49,9 @@ class SkillLevel(models.Model):
 class Activity(models.Model):
     name = models.CharField(max_length=200)
 
+    class Meta:
+        verbose_name_plural = "activities"
+
     def __str__(self):
         return self.name
 
@@ -58,6 +61,9 @@ class Activity(models.Model):
 
 class Goals(models.Model):
     name = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name_plural = "goals"
 
     def __str__(self):
         return self.name
@@ -115,6 +121,9 @@ class PreferredVenue(models.Model):
 class MajorCity(models.Model):
     name = models.CharField(max_length=200)
 
+    class Meta:
+        verbose_name_plural = "major cities"
+
     def __str__(self):
         return self.name
 
@@ -157,6 +166,9 @@ class DancePrefs(models.Model):
     activity = models.ForeignKey(Activity, default=1)
     goal = models.ForeignKey(Goals, default=1)
     notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name_plural = "dance prefs"
 
     def __str__(self):
         return str(self.dancer) + "'s " + str(self.dance) + ' prefs: ' + str(self.role)
