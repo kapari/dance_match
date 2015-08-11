@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 
-from .models import Dancer, Dance, Day, Time, Venue, PreferredVenue, DancePrefs, SkillLevel, Goals, Activity, DanceRole
+from .models import Dancer, Dance, Day, Time, Venue, PreferredVenue, PreferredSuburb, MajorCity, DancePrefs, SkillLevel, Goals, Activity, DanceRole
 
 import json
 
@@ -118,20 +118,16 @@ def edit_dance(request, user_id, dance_pref_id):
         dance_pref.role = role
 
         skill_level_id = request.POST.get("skill_level")
-        # TODO remove ifs
-        if skill_level_id:
-            skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
-            dance_pref.skill_level = skill_level
+        skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
+        dance_pref.skill_level = skill_level
 
         activity_id = request.POST.get("activity")
-        if activity_id:
-            activity = Activity.objects.filter(pk=activity_id)[0]
-            dance_pref.activity = activity
+        activity = Activity.objects.filter(pk=activity_id)[0]
+        dance_pref.activity = activity
 
         goal_id = request.POST.get("goal")
-        if goal_id:
-            goal = Goals.objects.filter(pk=goal_id)[0]
-            dance_pref.goal = goal
+        goal = Goals.objects.filter(pk=goal_id)[0]
+        dance_pref.goal = goal
 
         dance_pref.notes = request.POST["notes"]
 
@@ -196,6 +192,21 @@ def api_profile(request):
     profile_data["bio"] = dancer.bio
     profile_data["profile_img"] = dancer.img_path
     output.append(profile_data)
+    json_data = json.dumps(output, indent=4)
+    return HttpResponse(json_data, content_type='application/json')
+
+
+def api_suburbs(request):
+    preferred_suburbs = PreferredSuburb.objects.all()
+    output = []
+    for pref_suburb in preferred_suburbs:
+        subdata = {}
+        subdata["user_id"] = pref_suburb.dancer.user.id
+        subdata["id"] = pref_suburb.suburb.id
+        subdata["name"] = pref_suburb.suburb.name
+        subdata["hub_id"] = pref_suburb.suburb.hub.id
+        subdata["hub"] = pref_suburb.suburb.hub.name
+        output.append(subdata)
     json_data = json.dumps(output, indent=4)
     return HttpResponse(json_data, content_type='application/json')
 

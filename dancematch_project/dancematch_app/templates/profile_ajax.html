@@ -7,7 +7,7 @@
 <script>
     // TODO pull js into separate files
     var user_id = {{ user.id }}
-    var dancer_id = {{ user.dancer.id }}
+    // var dancer_id = {{ user.dancer.id }}
     var models = {};
 
     // TODO: finish implementing namespace
@@ -19,7 +19,7 @@
 //        }
     };
 
-    document.write("test for user ID: " + user_id + " -- dancer ID: " + dancer_id);
+    document.write("test for user ID: " + user_id);
     // Draw Loaded Data
 
 
@@ -39,7 +39,7 @@
     function drawPrefRead(parent, current_pref) {
         var models = DM.model_list;
         for (i = 0; i < models.length; i++) {
-            console.log(models[i]);
+            // console.log(models[i]);
             parent.getElementsByClassName(models[i])[0].innerHTML = current_pref[models[i]];
         }
         parent.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
@@ -61,8 +61,6 @@
         var profile = document.getElementById("profile");
         // only one dict in list
         var profile_data = data[0];
-        console.log(data);
-        console.log(profile_data);
         profile.getElementsByClassName("username")[0].innerText = profile_data["username"];
         profile.getElementsByClassName("first_name")[0].innerText = profile_data["first_name"];
         profile.getElementsByClassName("last_name")[0].innerText = profile_data["last_name"];
@@ -82,6 +80,38 @@
         addToggleListener(toggle_button);
     }
 
+    // TODO order suburbs by name
+    function drawSuburbs(data, user_id) {
+        var suburb_div = document.getElementById("suburbs");
+        var hubs = suburb_div.getElementsByTagName("ul");
+        // dict[1] = ul with data-id 1
+        var hub_ids = {};
+        for (i = 0; i < hubs.length; i++) {
+            var hub_id = hubs[i].getAttribute("data-id");
+            hub_ids[hub_id] = hubs[i];
+        }
+        for (i = 0; i < data.length; i++) {
+            var pref_suburb = data[i];
+            if (pref_suburb["user_id"] == user_id) {
+                // check if ul for each city hub
+                var current_hub_id = pref_suburb["hub_id"];
+                if (!(current_hub_id in hub_ids)) {
+                    var hub_ul = document.createElement("ul");
+                    hub_ul.setAttribute("data-id", current_hub_id);
+                    hub_ul.innerHTML = pref_suburb["hub"];
+                    hub_ids[current_hub_id] = hub_ul;
+                    suburb_div.appendChild(hub_ul);
+                }
+                // populate ul with corresponding suburb li
+                var suburb = document.createElement("li");
+                suburb.setAttribute('data-id', pref_suburb["id"]);
+                suburb.innerHTML = pref_suburb["name"];
+                var current_hub = hub_ids[current_hub_id];
+                current_hub.appendChild(suburb);
+            }
+        }
+
+    }
 
     function drawPrefList(parent, template, data, user_id) {
         for (var i = 0; i < data.length; i++) {
@@ -89,7 +119,7 @@
 
             // Draw pref only if user id matches current user
             if (!user_id || current_pref.user_id == user_id) {
-                console.log("user_id " + user_id);
+                // console.log("user_id " + user_id);
                 var clone = template.cloneNode(true);
                 clone.classList.remove("template");
                 clone.setAttribute("data-id", current_pref.id);
@@ -250,7 +280,7 @@
         var url = "/api_" + object_type + "/";
         var request = new XMLHttpRequest();
         request.open("GET", url);
-        console.log(request);
+        // console.log(request);
 
         //For pre html5 browsers use onstatuschanged
         request.onloadend = function (e) {
@@ -258,8 +288,8 @@
             var data = JSON.parse(json_string);
             window.models[object_type] = data;
             api_counter++;
-            console.log(object_type + ": " + api_counter);
-            console.log(model_list.length);
+            // console.log(object_type + ": " + api_counter);
+            // console.log(model_list.length);
             if (api_counter == model_list.length) {
                 api_loaded = true;
             }
@@ -329,6 +359,7 @@
     document.addEventListener("DOMContentLoaded", function(e) {
                 ApiCall("/api_dance_prefs/", drawPrefItems);
                 ApiCall("/api_profile/", drawProfile);
+                ApiCall("/api_suburbs/", drawSuburbs);
 //                if (api_loaded) {
 //                    newPref(user_id);
 //                } else {
@@ -368,6 +399,18 @@
     </div>
     <div class="btn_div">
         <button class="edit_toggle">Edit</button>
+    </div>
+</div>
+<div id="location">
+    <p>
+        Towns I like:
+    </p>
+    <div id="suburbs">
+    </div>
+    <p>
+        Venues I like:
+    </p>
+    <div id="venues">
     </div>
 </div>
 

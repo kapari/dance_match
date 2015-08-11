@@ -106,10 +106,10 @@ class PreferredVenue(models.Model):
     venue = models.ForeignKey(Venue)
 
     def __str__(self):
-        return self.dancer + " prefers " + self.name
+        return self.dancer.name + " prefers " + self.name
 
     def __unicode__(self):
-        return self.dancer + " prefers " + self.name
+        return self.dancer.name + " prefers " + self.name
 
 
 class MajorCity(models.Model):
@@ -137,6 +137,11 @@ class PreferredSuburb(models.Model):
     dancer = models.ForeignKey(Dancer)
     suburb = models.ForeignKey(Suburb)
 
+    def __str__(self):
+        return self.dancer.user.username + " likes " + self.suburb.name
+
+    def __unicode__(self):
+        return self.dancer.user.username + " likes " + self.suburb.name
 
 # class Messages(models.Model):
 #     from_user = models.ForeignKey(User)
