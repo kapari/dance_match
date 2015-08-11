@@ -8,12 +8,24 @@
 
     // TODO write filter
     function filterPrefs(data, user_id) {
+        
+    }
 
+    function sortByDance(a, b) {
+        if (a.dance > b.dance) {
+            return 1;
+        } else if (a.dance < b.dance) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 
     function drawPrefs(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
+
+        data.sort(sortByDance);
 
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
