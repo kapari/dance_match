@@ -6,26 +6,30 @@
 <script>
     var user_id = {{ user.id }}
 
-    // TODO write filter
-    function filterPrefs(data, user_id) {
-
+    // TODO write filters: dance, role, goal
+    function filterBy(criteria, value) {
+        return function(pref) {
+            return pref[criteria] == value;
+        }
     }
 
-    function sortByDance(a, b) {
-        if (a.dance > b.dance) {
+    // TODO sort by name and level
+    function sortByName(a, b) {
+        if (a.first_name > b.first_name) {
             return 1;
-        } else if (a.dance < b.dance) {
+        } else if (a.first_name < b.first_name) {
             return -1;
         } else {
             return 0;
         }
     }
 
+
     function drawPrefs(data, user_id) {
         var pl = document.getElementById("pref_list");
         var template = pl.getElementsByClassName("template")[0];
 
-        data.sort(sortByDance);
+        data.sort(sortByName);
 
         for (var i = 0; i < data.length; i++) {
             var current_pref = data[i];
@@ -86,36 +90,39 @@
 
 </script>
 
-<table>
-    <caption>
-            A listing of all dances uploaded by site users.
-    </caption>
-    <thead>
-        <tr>
-            <th id="profile_img">Image</th>
-            <th id="name">Name</th>
-            <th id="dance">Dance</th>
-            <th id="role">Role</th>
-            <th id="skill_level">Level</th>
-            <th id="goal">Goal</th>
-            <th id="notes">Description</th>
-            <th id="location">Location Match</th>
-        </tr>
-    </thead>
-    <tbody id="pref_list">
-        <tr class="template">
-            <td headers="profile_img" class="profile_img">
-                <img src="" class="thumb">
-            </td>
-            <td headers="dancer" class="dancer">Dancer</td>
-            <td headers="dance" class="dance">Dance Style</td>
-            <td headers="role" class="role">Role</td>
-            <td headers="skill_level" class="skill_level">Skill Level</td>
-            <td headers="goal" class="goal">Goal</td>
-            <td headers="notes" class="notes">Notes here.</td>
-            <td headers="location" class="suburbs"></td>
-        </tr>
-    </tbody>
-</table>
+<div id="results">
+    <table>
+        <caption>
+                A listing of all dances uploaded by site users.
+        </caption>
+        <thead>
+            <tr>
+                <th id="profile_img">Image</th>
+                <th id="name">Name</th>
+                <th id="dance">Dance</th>
+                <th id="role">Role</th>
+                <th id="skill_level">Level</th>
+                <th id="goal">Goal</th>
+                <th id="notes">Description</th>
+                <th id="location">Location Match</th>
+            </tr>
+        </thead>
+        <tbody id="pref_list">
+            <tr class="template">
+                <td headers="profile_img" class="profile_img">
+                    <img src="" class="thumb">
+                </td>
+                <td headers="dancer" class="dancer">Dancer</td>
+                <td headers="dance" class="dance">Dance Style</td>
+                <td headers="role" class="role">Role</td>
+                <td headers="skill_level" class="skill_level">Skill Level</td>
+                <td headers="goal" class="goal">Goal</td>
+                <td headers="notes" class="notes">Notes here.</td>
+                <td headers="location" class="suburbs"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 
 {% endblock %}

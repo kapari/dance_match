@@ -19,6 +19,10 @@ class Dance(models.Model):
     name = models.CharField(default='', max_length=200)
     description = models.TextField(blank=True)
 
+    class Meta:
+        ordering = ["name"]
+
+
     def __str__(self):
         return self.name
 
