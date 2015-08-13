@@ -19,6 +19,7 @@ function sortByName(a, b) {
 }
 
 function drawResults(data, user_id) {
+    drawFilter();
     console.log("Draw Results");
 
     if (!api_loaded) {
@@ -26,13 +27,15 @@ function drawResults(data, user_id) {
         console.log("waiting for results...");
         return
     }
-    var pl = document.getElementById("pref_list");
+
+    var pl = document.getElementById("pref_results");
     var template = pl.getElementsByClassName("template")[0];
 
-    //data.sort(sortByName);
+    data.sort(sortByName);
 
     for (var i = 0; i < data.length; i++) {
         var current_pref = data[i];
+        console.log("current pref: " + current_pref);
 
         if (current_pref.user_id != DM.user_id) {
             console.log("user_id " + DM.user_id);
@@ -70,4 +73,21 @@ function drawResults(data, user_id) {
             pl.appendChild(clone);
         }
     }
+}
+
+function drawFilter() {
+    var parent = document.getElementById("search_fields");
+    var filter_lists = ["dance_list", "role_list", "goal_list"];
+    var default_selection = 1;
+    for (i = 0; i < filter_lists.length; i++) {
+        var current_select = parent.getElementsByClassName(filter_lists[i])[0];
+        drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
+        addFilterListener(current_select);
+    }
+}
+
+function addFilterListener(select) {
+    select.addEventListener("change", function(e) {
+
+    })
 }

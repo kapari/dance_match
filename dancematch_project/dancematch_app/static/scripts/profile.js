@@ -5,6 +5,8 @@ function drawProfile(data) {
     // only one dict in list
     var profile_data = data[0];
     DM.user_id = profile_data["id"];
+    var header = document.getElementById("dancer_name");
+    header.innerHTML = profile_data["first_name"] + " " + profile_data["last_name"];
 
     profile.getElementsByClassName("username")[0].innerText = profile_data["username"];
     profile.getElementsByClassName("first_name")[0].innerText = profile_data["first_name"];
@@ -27,7 +29,6 @@ function drawProfile(data) {
     // Wait until have user_id before drawing others
     ApiCall("/api_dance_prefs/", drawPrefItems, "pref_data");
     ApiCall("/api_suburbs/", drawSuburbs, "suburb_data");
-    drawResults(DM.pref_data, DM.user_id);
 }
 
 function drawSuburbs(data, user_id) {

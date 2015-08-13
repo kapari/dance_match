@@ -10,6 +10,8 @@ function hashChanged(e) {
     var after_hash = 1;
     var hash = window.location.hash;
     hash = hash.split("#")[after_hash];
+    console.log("hash change: " + hash);
+
     showView(hash);
 }
 

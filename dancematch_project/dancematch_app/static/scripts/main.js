@@ -89,6 +89,8 @@ function drawPrefItems(data) {
 
     drawPrefList(pl, template, data, user_id);
     addPrefListeners("pref_list");
+    drawResults(DM.pref_data, DM.user_id);
+
 }
 
 

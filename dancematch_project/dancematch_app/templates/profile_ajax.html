@@ -6,7 +6,7 @@
 <!-- PROFILE VIEW =========================== -->
 
 <section id="profile_content" class="view">
-    <h1>{{ dancer.name }}</h1>
+    <h1 id="dancer_name"></h1>
 
     <div id="profile">
         <div class="read">
@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <h2>{{ dancer.user.first_name }}'s Dances</h2>
+    <h2>My Dances</h2>
 
     <a href="/edit/{{ user.id }}/0/">Add a new dance</a>
 
@@ -88,6 +88,21 @@
 <!-- SEARCH RESULTS VIEW ==================== -->
 
 <section id="search_content" class="view">
+    <div id="search_fields">
+        <label>
+            Dance Style:
+            <select class="search_field dance_list">Dance Style</select>
+        </label>
+        <label>
+            Role:
+            <select class="search_field role_list">Role</select>
+        </label>
+        <label>
+            Goal:
+            <select class="search_field goal_list">Goal</select>
+        </label>
+        <button class="search">Go</button>
+    </div>
     <table>
         <caption>
                 A listing of all dances uploaded by site users.
@@ -101,10 +116,10 @@
                 <th id="skill_level">Level</th>
                 <th id="goal">Goal</th>
                 <th id="notes">Description</th>
-                <th id="location">Location Match</th>
+                <th id="loc_match">Location Match</th>
             </tr>
         </thead>
-        <tbody id="pref_list">
+        <tbody id="pref_results">
             <tr class="template">
                 <td headers="profile_img" class="profile_img">
                     <img src="" class="thumb">
@@ -115,7 +130,7 @@
                 <td headers="skill_level" class="skill_level">Skill Level</td>
                 <td headers="goal" class="goal">Goal</td>
                 <td headers="notes" class="notes">Notes here.</td>
-                <td headers="location" class="suburbs"></td>
+                <td headers="loc_match" class="suburbs"></td>
             </tr>
         </tbody>
     </table>
