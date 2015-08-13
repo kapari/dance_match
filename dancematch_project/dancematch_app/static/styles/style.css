@@ -12,7 +12,7 @@ body {
     font-family: "Trebuchet MS", sans-serif;
 }
 
-header, footer, nav, main, aside {
+header, footer, nav, main, aside, section {
     box-sizing: border-box;
 }
 
@@ -169,4 +169,12 @@ footer {
 
 .hide {
     display: none;
+}
+
+.view {
+    display: none;
+}
+
+.view.show {
+    display: block;
 }
