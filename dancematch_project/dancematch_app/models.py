@@ -139,6 +139,9 @@ class Suburb(models.Model):
     name = models.CharField(max_length=200)
     hub = models.ForeignKey(MajorCity)
 
+    class Meta:
+        ordering = ["name"]
+
     def __str__(self):
         return self.hub.name + ": " + self.name
 
@@ -149,6 +152,9 @@ class Suburb(models.Model):
 class PreferredSuburb(models.Model):
     dancer = models.ForeignKey(Dancer)
     suburb = models.ForeignKey(Suburb)
+
+    class Meta:
+        ordering = ["suburb"]
 
     def __str__(self):
         return self.dancer.user.username + " likes " + self.suburb.name

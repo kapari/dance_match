@@ -18,7 +18,7 @@ var DM = {
 //        }
 };
 
-// document.write("test for user ID: " + user_id);
+document.write("test for user ID: " + DM.user_id);
 // Draw Loaded Data
 
 
@@ -85,7 +85,6 @@ function drawProfile(data) {
     ApiCall("/api_suburbs/", drawSuburbs, "suburb_data");
 }
 
-// TODO order suburb lis by name
 function drawSuburbs(data, user_id) {
     var suburb_div = document.getElementById("suburbs");
     var hubs = suburb_div.getElementsByTagName("ul");
@@ -425,7 +424,7 @@ function ApiCall(url, function_name, save_name) {
     request.onloadend = function (e) {
         var json_string = e.currentTarget.responseText;
         var data = JSON.parse(json_string);
-        DM[save_name] = data;
+        DM.save_name = data;
         function_name(data, DM.user_id);
     };
     request.send();
