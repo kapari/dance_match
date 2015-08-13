@@ -1,3 +1,4 @@
+// PROFILE VIEW
 
 function drawProfile(data) {
     var profile = document.getElementById("profile");
@@ -26,6 +27,7 @@ function drawProfile(data) {
     // Wait until have user_id before drawing others
     ApiCall("/api_dance_prefs/", drawPrefItems, "pref_data");
     ApiCall("/api_suburbs/", drawSuburbs, "suburb_data");
+    drawResults(DM.pref_data, DM.user_id);
 }
 
 function drawSuburbs(data, user_id) {

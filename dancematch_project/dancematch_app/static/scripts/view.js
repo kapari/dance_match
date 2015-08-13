@@ -15,7 +15,7 @@ function hashChanged(e) {
 
 function init() {
     window.addEventListener("hashchange", hashChanged);
-    showView("profile")
+    showView("profile");
 }
 
 document.addEventListener("DOMContentLoaded", init);

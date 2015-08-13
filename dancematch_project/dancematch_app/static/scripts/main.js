@@ -1,6 +1,4 @@
 
-
-// TODO pull js into separate files
 //var user_id = {{ user.id }}
 // var dancer_id = {{ user.dancer.id }}
 var models = {};
@@ -222,11 +220,6 @@ function modelApi(object_type) {
     request.send();
 }
 
-var model_list = DM.model_list_list;
-for (i = 0; i < model_list.length; i++) {
-    modelApi(model_list[i]);
-}
-
 
 // TODO: run on button click; break into smaller functions
 function newPref() {
@@ -256,82 +249,17 @@ function newPref() {
     drawPrefRead(parent, new_pref);
     drawPrefEdit(parent, new_pref);
 
-    var button = parent.getElementsByClassName("save_pref");
+    var button = parent.getElementsByClassName("save_pref")[0];
     button.addEventListener("click", function(e) {
         sendPost(new_pref, "/update_pref/")
     });
-    var cancel_btn = document.getElementsByClassName("cancel_pref");
+    var cancel_btn = document.getElementsByClassName("cancel_pref")[0];
     cancel_btn.addEventListener("click", function(e) {
         div.classList.add("hide");
     });
 }
 
-// RESULTS VIEW -----------------------------
 
-// TODO write filters: dance, role, goal
-function filterBy(criteria, value) {
-    return function(pref) {
-        return pref[criteria] == value;
-    }
-}
-
-// TODO sort by name and level
-function sortByName(a, b) {
-    if (a.first_name > b.first_name) {
-        return 1;
-    } else if (a.first_name < b.first_name) {
-        return -1;
-    } else {
-        return 0;
-    }
-}
-
-function drawResults(data, user_id) {
-    var pl = document.getElementById("pref_list");
-    var template = pl.getElementsByClassName("template")[0];
-
-    data.sort(sortByName);
-
-    for (var i = 0; i < data.length; i++) {
-        var current_pref = data[i];
-
-        if (current_pref.user_id != DM.user_id) {
-            console.log("user_id " + DM.user_id);
-            var clone = template.cloneNode(true);
-            clone.classList.remove("template");
-//                clone.classList.add("hide");
-
-            clone.setAttribute("data-id", current_pref.id);
-
-            clone.getElementsByClassName("thumb")[0].setAttribute('src', current_pref.img_path);
-            clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.first_name;
-            clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
-            clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
-            clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
-            clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
-            clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
-            clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
-
-            // TODO show only suburbs that match current user's prefs
-            var location_cell = clone.getElementsByClassName("suburbs")[0];
-            var suburb_list = current_pref.suburbs;
-
-            if (suburb_list.length > 0) {
-                for (var j = 0; j < suburb_list.length; j++) {
-                    console.log(suburb_list[j].sub_name);
-                    var name_span = document.createElement("span");
-                    name_span.innerHTML += suburb_list[j].sub_name;
-                    location_cell.appendChild(name_span);
-                }
-            } else {
-                location_cell.innerHTML += '';
-            }
-
-
-            pl.appendChild(clone);
-        }
-    }
-}
 // END RESULTS VIEW -------------------------
 
 
@@ -344,11 +272,37 @@ function ApiCall(url, function_name, save_name) {
     request.onloadend = function (e) {
         var json_string = e.currentTarget.responseText;
         var data = JSON.parse(json_string);
-        DM.save_name = data;
+        DM[save_name] = data;
         function_name(data, DM.user_id);
     };
     request.send();
 }
+
+
+var model_list = DM.model_list_list;
+for (i = 0; i < model_list.length; i++) {
+    modelApi(model_list[i]);
+}
+
+
+function viewListener() {
+
+    //ApiCall("/api_profile/", drawProfile, "profile_data");
+    //if (api_loaded) {
+    //    newPref(user_id);
+    //} else {
+    //    setTimeout(function(){
+    //        newPref(user_id)
+    //    }, 5000);
+    //}
+    //while (!api_loaded) {
+    //    console.log("waiting...");
+    //}
+    newPref();
+    drawResults(DM.pref_data, DM.user_id);
+}
+
+
 
 document.addEventListener("DOMContentLoaded", function(e) {
     // API call for profile first, to get user_id
@@ -363,19 +317,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
         drawProfile(data);
     };
     request.send();
-    //ApiCall("/api_profile/", drawProfile, "profile_data");
-    //if (api_loaded) {
-    //    newPref(user_id);
-    //} else {
-    //    setTimeout(function(){
-    //        newPref(user_id)
-    //    }, 5000);
-    //}
-    //while (!api_loaded) {
-    //    console.log("waiting...");
-    //}
-    newPref();
-    drawResults(DM.api_prefs, DM.user_id);
 });
 
 // TODO: Init: create namespace, gather data, draw things, add listeners
