@@ -21,11 +21,7 @@ function sortByName(a, b) {
 function drawResults(data, user_id) {
     drawFilter();
 
-    if (!api_loaded) {
-        setTimeout(drawResults, 100);
-        console.log("waiting for results...");
-        return
-    }
+    waitForData(drawResults);
 
     var pl = document.getElementById("pref_results");
     var template = pl.getElementsByClassName("template")[0];
@@ -37,40 +33,49 @@ function drawResults(data, user_id) {
 
         if (current_pref.user_id != DM.user_id) {
             var clone = template.cloneNode(true);
-            clone.classList.remove("template");
-//                clone.classList.add("hide");
-
-            clone.setAttribute("data-id", current_pref.id);
-
-            clone.getElementsByClassName("thumb")[0].setAttribute('src', current_pref.img_path);
-            clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.first_name;
-            clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
-            clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
-            clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
-            clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
-            clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
-            clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+            drawResultPref(current_pref, clone);
 
             // TODO show only suburbs that match current user's prefs
-            var location_cell = clone.getElementsByClassName("suburbs")[0];
-            var suburb_list = current_pref.suburbs;
-
-            if (suburb_list.length > 0) {
-                for (var j = 0; j < suburb_list.length; j++) {
-                    // console.log(suburb_list[j].sub_name);
-                    var name_span = document.createElement("span");
-                    name_span.innerHTML += suburb_list[j].sub_name;
-                    location_cell.appendChild(name_span);
-                }
-            } else {
-                location_cell.innerHTML += '';
-            }
-
+            drawResultLocation(current_pref, clone);
 
             pl.appendChild(clone);
         }
     }
 }
+
+
+function drawResultPref(current_pref, clone) {
+    clone.classList.remove("template");
+//  clone.classList.add("hide");
+
+    clone.setAttribute("data-id", current_pref.id);
+    clone.getElementsByClassName("thumb")[0].setAttribute('src', current_pref.img_path);
+    clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.first_name;
+    clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
+    clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
+    clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
+    clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
+    clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
+    clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+}
+
+
+function drawResultLocation(current_pref, clone) {
+    var location_cell = clone.getElementsByClassName("suburbs")[0];
+    var suburb_list = current_pref.suburbs;
+
+    if (suburb_list.length > 0) {
+        for (var j = 0; j < suburb_list.length; j++) {
+            // console.log(suburb_list[j].sub_name);
+            var name_span = document.createElement("span");
+            name_span.innerHTML += suburb_list[j].sub_name;
+            location_cell.appendChild(name_span);
+        }
+    } else {
+        location_cell.innerHTML += '';
+    }
+}
+
 
 function drawFilter() {
     var parent = document.getElementById("search_fields");

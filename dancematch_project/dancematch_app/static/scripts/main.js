@@ -184,6 +184,13 @@ function addToggleListener(button) {
     });
 }
 
+function waitForData(function_name) {
+    if (!api_loaded) {
+        setTimeout(function_name, 100);
+        console.log("loading...");
+    }
+}
+
 // AJAX POST
 function sendPost(item, url) {
     var form_data = new FormData();
@@ -225,11 +232,8 @@ function modelApi(object_type) {
 
 // TODO: run on button click; break into smaller functions
 function newPref() {
-    if (!api_loaded) {
-        setTimeout(newPref, 100);
-        console.log("waiting...");
-        return
-    }
+    waitForData(newPref);
+
     var parent = document.getElementById("new_pref");
     var template = document.getElementsByClassName("template")[0];
     var clone = template.cloneNode(true);
@@ -251,13 +255,14 @@ function newPref() {
     drawPrefRead(parent, new_pref);
     drawPrefEdit(parent, new_pref);
 
+    // TODO: fix buttons...
     var button = parent.getElementsByClassName("save_pref")[0];
     button.addEventListener("click", function(e) {
         sendPost(new_pref, "/update_pref/")
     });
-    var cancel_btn = document.getElementsByClassName("cancel_pref")[0];
+    var cancel_btn = parent.getElementsByClassName("cancel_pref")[0];
     cancel_btn.addEventListener("click", function(e) {
-        div.classList.add("hide");
+        // div.classList.add("hide");
     });
 }
 
