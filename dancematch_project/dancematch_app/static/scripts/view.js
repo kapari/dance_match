@@ -6,18 +6,20 @@ function showView(view) {
     document.getElementById(view + "_content").classList.add("show");
 }
 
-function hashChanged(e) {
+function hashChanged() {
     var after_hash = 1;
     var hash = window.location.hash;
     hash = hash.split("#")[after_hash];
-    console.log("hash change: " + hash);
-
+    // console.log("hash change: " + hash);
+    if ((!hash) || (hash == "")) {
+        hash = "profile";
+    }
     showView(hash);
 }
 
 function init() {
     window.addEventListener("hashchange", hashChanged);
-    showView("profile");
+    hashChanged();
 }
 
 document.addEventListener("DOMContentLoaded", init);

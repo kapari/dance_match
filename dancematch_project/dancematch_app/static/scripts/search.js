@@ -1,9 +1,9 @@
 // SEARCH VIEW -----------------------------
 
 // TODO write filters: dance, role, goal
-function filterBy(criteria, value) {
+function filterBy(property, value) {
     return function(pref) {
-        return pref[criteria] == value;
+        return pref[property + "_id"] == value;
     }
 }
 
@@ -20,7 +20,6 @@ function sortByName(a, b) {
 
 function drawResults(data, user_id) {
     drawFilter();
-    console.log("Draw Results");
 
     if (!api_loaded) {
         setTimeout(drawResults, 100);
@@ -35,10 +34,8 @@ function drawResults(data, user_id) {
 
     for (var i = 0; i < data.length; i++) {
         var current_pref = data[i];
-        console.log("current pref: " + current_pref);
 
         if (current_pref.user_id != DM.user_id) {
-            console.log("user_id " + DM.user_id);
             var clone = template.cloneNode(true);
             clone.classList.remove("template");
 //                clone.classList.add("hide");
@@ -60,7 +57,7 @@ function drawResults(data, user_id) {
 
             if (suburb_list.length > 0) {
                 for (var j = 0; j < suburb_list.length; j++) {
-                    console.log(suburb_list[j].sub_name);
+                    // console.log(suburb_list[j].sub_name);
                     var name_span = document.createElement("span");
                     name_span.innerHTML += suburb_list[j].sub_name;
                     location_cell.appendChild(name_span);
@@ -82,12 +79,23 @@ function drawFilter() {
     for (i = 0; i < filter_lists.length; i++) {
         var current_select = parent.getElementsByClassName(filter_lists[i])[0];
         drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
-        addFilterListener(current_select);
+        var property = filter_lists[i].split("_")[0];
+        console.log(property);
+        addFilterListener(current_select, property);
     }
 }
 
-function addFilterListener(select) {
-    select.addEventListener("change", function(e) {
-
+function addFilterListener(select_element, property) {
+    select_element.addEventListener("change", function(e) {
+        var value = e.target.value;
+        console.log(value);
+        console.log(property);
+        // TODO: log filtering criteria
+        redrawResults(property, value);
     })
+}
+
+// TODO: redraw results from filtered list
+function redrawResults(property, value) {
+    filterBy(property, value);
 }

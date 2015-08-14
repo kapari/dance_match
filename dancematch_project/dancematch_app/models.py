@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class Dancer(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField()
-    img_path = models.CharField(max_length=200, default="/statc/uploads/default.png")
+    img_path = models.CharField(max_length=200, default="/static/uploads/default.png")
 
     def __str__(self):
         return "User ID: " + str(self.user.id) + str(self.user.first_name) + " " + str(self.user.last_name)
