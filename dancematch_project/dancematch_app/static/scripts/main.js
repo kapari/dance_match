@@ -35,7 +35,7 @@ function drawDropdown(select, data, name_field, id_field, selected) {
 
 function drawPrefRead(parent, current_pref) {
     var models = DM.model_list;
-    for (i = 0; i < models.length; i++) {
+    for (var i = 0; i < models.length; i++) {
         // console.log(models[i]);
         parent.getElementsByClassName(models[i])[0].innerHTML = current_pref[models[i]];
     }
@@ -46,7 +46,7 @@ function drawPrefRead(parent, current_pref) {
 function drawPrefEdit(parent, current_pref) {
     var models = DM.model_list;
     var model_lists = DM.model_list_list;
-    for (i = 0; i < models.length; i++) {
+    for (var i = 0; i < models.length; i++) {
         drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
                 window.models[model_lists[i]], "name", "id", current_pref[models[i]]);
     }
@@ -89,7 +89,7 @@ function drawPrefItems(data) {
 
     drawPrefList(pl, template, data, user_id);
     addPrefListeners("pref_list");
-    drawResults(DM.pref_data, DM.user_id);
+    drawResultView(DM.pref_data, DM.user_id);
 
 }
 
@@ -146,7 +146,7 @@ function onPrefUpdate(e) {
 function addPrefListeners(parent_id) {
     var pref_list = document.getElementById(parent_id);
     var edit_fields = pref_list.getElementsByClassName("edit_field");
-    for (i = 0; i < edit_fields.length; i++) {
+    for (var i = 0; i < edit_fields.length; i++) {
         var current_field = edit_fields[i];
         current_field.addEventListener("change", onPrefUpdate);
     }
@@ -157,7 +157,7 @@ function updateReadOnly(value, model) {
     var option_list = window.models[model];
     var option_count = option_list.length;
     var text = "NOPE";
-    for (i = 0; i < option_count; i++) {
+    for (var i = 0; i < option_count; i++) {
         var option = option_list[i];
         if (option.id == value) {
             text = option.name;
@@ -287,7 +287,7 @@ function ApiCall(url, function_name, save_name) {
 
 
 var model_list = DM.model_list_list;
-for (i = 0; i < model_list.length; i++) {
+for (var i = 0; i < model_list.length; i++) {
     modelApi(model_list[i]);
 }
 
@@ -306,7 +306,7 @@ function viewListener() {
     //    console.log("waiting...");
     //}
     newPref();
-    drawResults(DM.pref_data, DM.user_id);
+    drawResultView(DM.pref_data, DM.user_id);
 }
 
 

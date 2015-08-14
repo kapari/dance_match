@@ -1,5 +1,41 @@
 // SEARCH VIEW -----------------------------
 
+// To support arr.filter() in older browsers
+if (!Array.prototype.filter) {
+  Array.prototype.filter = function(fun/*, thisArg*/) {
+    'use strict';
+
+    if (this === void 0 || this === null) {
+      throw new TypeError();
+    }
+
+    var t = Object(this);
+    var len = t.length >>> 0;
+    if (typeof fun !== 'function') {
+      throw new TypeError();
+    }
+
+    var res = [];
+    var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+    for (var i = 0; i < len; i++) {
+      if (i in t) {
+        var val = t[i];
+
+        // NOTE: Technically this should Object.defineProperty at
+        //       the next index, as push can be affected by
+        //       properties on Object.prototype and Array.prototype.
+        //       But that method's new, and collisions should be
+        //       rare, so use the more-compatible alternative.
+        if (fun.call(thisArg, val, i, t)) {
+          res.push(val);
+        }
+      }
+    }
+    return res;
+  };
+}
+
+
 // TODO write filters: dance, role, goal
 function filterBy(property, value) {
     return function(pref) {
@@ -18,33 +54,49 @@ function sortByName(a, b) {
     }
 }
 
-function drawResults(data, user_id) {
+function drawResultView(data, user_id) {
+
+    waitForData(drawResultView);
     drawFilter();
 
-    waitForData(drawResults);
+    // data.sort(sortByName);
+    drawResultList(data);
+}
 
-    var pl = document.getElementById("pref_results");
-    var template = pl.getElementsByClassName("template")[0];
 
-    data.sort(sortByName);
-
+function drawResultList(data) {
+    var results_table = document.getElementById("pref_results");
+    var template = results_table.getElementsByClassName("template")[0];
     for (var i = 0; i < data.length; i++) {
         var current_pref = data[i];
 
         if (current_pref.user_id != DM.user_id) {
             var clone = template.cloneNode(true);
-            drawResultPref(current_pref, clone);
+            drawResultData(current_pref, clone);
 
             // TODO show only suburbs that match current user's prefs
             drawResultLocation(current_pref, clone);
 
-            pl.appendChild(clone);
+            results_table.appendChild(clone);
         }
     }
 }
 
 
-function drawResultPref(current_pref, clone) {
+function filterResults(criteria_list, value_list) {
+    return function(pref) {
+        var keep = true;
+        for (var i = 0; i < criteria_list.length; i++) {
+            if (pref[criteria_list[i]] != value_list[i]) {
+                keep = false;
+            }
+        }
+        return keep;
+    }
+}
+
+
+function drawResultData(current_pref, clone) {
     clone.classList.remove("template");
 //  clone.classList.add("hide");
 
@@ -95,12 +147,11 @@ function addFilterListener(select_element, property) {
         var value = e.target.value;
         console.log(value);
         console.log(property);
+
+        var filtered_data = data.filter(filterResults(["dance_id", "role_id"], [6, 2]));
+
         // TODO: log filtering criteria
         redrawResults(property, value);
     })
 }
 
-// TODO: redraw results from filtered list
-function redrawResults(property, value) {
-    filterBy(property, value);
-}
