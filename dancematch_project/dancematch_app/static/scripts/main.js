@@ -10,7 +10,7 @@ var DM = {
     model_list_list: ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"],
     profile_data: [],
     pref_data: [],
-    suburb_data: []
+    suburb_data: [],
 //        model: {
 //            items: []
 //        }

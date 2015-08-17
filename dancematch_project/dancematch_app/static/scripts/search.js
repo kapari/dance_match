@@ -67,11 +67,17 @@ function drawResultView(data, user_id) {
 function drawResultList(data) {
     var results_table = document.getElementById("pref_results");
     var template = results_table.getElementsByClassName("template")[0];
+    // empty list first and reattach template
+    while (results_table.firstChild) {
+        results_table.removeChild(results_table.firstChild);
+    }
+    results_table.appendChild(template);
+
     for (var i = 0; i < data.length; i++) {
+        var clone = template.cloneNode(true);
         var current_pref = data[i];
 
         if (current_pref.user_id != DM.user_id) {
-            var clone = template.cloneNode(true);
             drawResultData(current_pref, clone);
 
             // TODO show only suburbs that match current user's prefs
@@ -117,10 +123,11 @@ function drawResultLocation(current_pref, clone) {
     var suburb_list = current_pref.suburbs;
 
     if (suburb_list.length > 0) {
-        for (var j = 0; j < suburb_list.length; j++) {
+        console.log("suburb_list: " + suburb_list);
+        for (var i = 0; i < suburb_list.length; i++) {
             // console.log(suburb_list[j].sub_name);
             var name_span = document.createElement("span");
-            name_span.innerHTML += suburb_list[j].sub_name;
+            name_span.innerHTML += suburb_list[i].sub_name;
             location_cell.appendChild(name_span);
         }
     } else {
@@ -133,25 +140,53 @@ function drawFilter() {
     var parent = document.getElementById("search_fields");
     var filter_lists = ["dance_list", "role_list", "goal_list"];
     var default_selection = 1;
-    for (i = 0; i < filter_lists.length; i++) {
+    for (var i = 0; i < filter_lists.length; i++) {
         var current_select = parent.getElementsByClassName(filter_lists[i])[0];
         drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
         var property = filter_lists[i].split("_")[0];
         console.log(property);
-        addFilterListener(current_select, property);
+        // addFilterListener(current_select, property);
     }
+    addSearchListener(parent, filter_lists);
 }
 
 function addFilterListener(select_element, property) {
     select_element.addEventListener("change", function(e) {
         var value = e.target.value;
-        console.log(value);
-        console.log(property);
+        var data = DM.pref_data;
+        console.log("value: " + value);
+        console.log("property: " + property);
 
-        var filtered_data = data.filter(filterResults(["dance_id", "role_id"], [6, 2]));
+        var property_list = [];
+        var value_list = [];
+        var filtered_data = data.filter(filterResults(["dance_id", "role_id"], [6, 1]));
 
         // TODO: log filtering criteria
-        redrawResults(property, value);
+        drawResultList(filtered_data);
     })
 }
 
+function addSearchListener(parent, filter_lists) {
+    var data = DM.pref_data;
+    var search_button = parent.getElementsByClassName("search")[0];
+
+    search_button.addEventListener("click", function(e) {
+        var property_list = [];
+        var value_list = [];
+        for (var i = 0; i < filter_lists.length; i++) {
+            var current_select = parent.getElementsByClassName(filter_lists[i])[0];
+            var property = filter_lists[i].split("_")[0] + "_id";
+            var value = current_select.value;
+            if ((property == "goal_id") && (value == 1)) {
+                console.log("goal not set");
+            } else {
+                property_list.push(property);
+                value_list.push(value);
+            }
+
+            // var filtered_data = data.filter(filterResults(["dance_id", "role_id"], [6, 1]));
+        var filtered_data = data.filter(filterResults(property_list, value_list));
+        drawResultList(filtered_data);
+        }
+    });
+}
