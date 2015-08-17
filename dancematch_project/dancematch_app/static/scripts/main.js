@@ -11,6 +11,7 @@ var DM = {
     profile_data: [],
     pref_data: [],
     suburb_data: [],
+    sort_state: {"name_or_level": "up or down"}
 //        model: {
 //            items: []
 //        }
