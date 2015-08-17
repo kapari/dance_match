@@ -56,8 +56,10 @@ function drawPrefEdit(parent, current_pref) {
 
 
 function drawPrefList(parent, template, data, user_id) {
-    for (var i = 0; i < data.length; i++) {
-        var current_pref = data[i];
+    var sorted_data = data.sort(sortResults("dance"));
+
+    for (var i = 0; i < sorted_data.length; i++) {
+        var current_pref = sorted_data[i];
 
         // Draw pref only if user id matches current user
         if (!user_id || current_pref.user_id == user_id) {
