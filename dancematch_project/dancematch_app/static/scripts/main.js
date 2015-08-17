@@ -90,7 +90,7 @@ function drawPrefItems(data) {
 
     drawPrefList(pl, template, data, user_id);
     addPrefListeners("pref_list");
-    drawResultView(DM.pref_data, DM.user_id);
+    drawResultView();
 
 }
 
@@ -307,7 +307,7 @@ function viewListener() {
     //    console.log("waiting...");
     //}
     newPref();
-    drawResultView(DM.pref_data, DM.user_id);
+    drawResultView();
 }
 
 

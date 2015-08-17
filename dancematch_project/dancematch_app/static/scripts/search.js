@@ -36,19 +36,20 @@ if (!Array.prototype.filter) {
 }
 
 
-function drawResultView(data, user_id) {
-
+function drawResultView() {
     waitForData(drawResultView);
     drawFilter();
     addSortListeners();
-    // drawResultList(data);
 }
 
 
 function drawResultList(data) {
 
-    // check if sorted?
-    // var sorted_data = data.sort(sortResults("first_name"));
+    var table = document.getElementsByTagName("table")[0];
+    table.classList.remove("hide");
+
+    var placeholder = document.getElementById("placeholder");
+    placeholder.classList.add("hide");
 
     var results_table = document.getElementById("pref_results");
     var template = results_table.getElementsByClassName("template")[0];
@@ -73,7 +74,6 @@ function drawResultList(data) {
     }
 }
 
-// TODO sort by name and level
 function sortResults(criteria) {
     if (criteria == "skill_level") {
         criteria += "_id";
@@ -197,7 +197,6 @@ function checkFilter() {
     var header = document.getElementById("results_header");
     var sorted = header.getElementsByClassName("sorted")[0];
     var sort_criteria = sorted.getAttribute("id");
-    console.log("sort_criteria " + sort_criteria);
 
     sortFilteredList(filtered_data, sort_criteria);
 }
@@ -209,13 +208,7 @@ function addSortListeners() {
     for (var i = 0; i < sortable.length; i++) {
         sortable[i].addEventListener("click", function(e) {
             header.getElementsByClassName("sorted")[0].classList.remove("sorted");
-            console.log("e.target: " + e.target);
-            console.log("e parent: " + e.target.parent);
             e.target.parentElement.classList.add("sorted");
-
-            var header_id = e.target.parentElement.getAttribute("id");
-            console.log("header_id: " + header_id);
-
             checkFilter();
         })
     }
