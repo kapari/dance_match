@@ -1,6 +1,9 @@
-// SEARCH VIEW -----------------------------
+// ===== SEARCH VIEW ==================================
+// ====================================================
 
-// To support arr.filter() in older browsers
+
+// ===== OLDER BROWSER SUPPORT ========================
+
 if (!Array.prototype.filter) {
   Array.prototype.filter = function(fun/*, thisArg*/) {
     'use strict';
@@ -36,12 +39,86 @@ if (!Array.prototype.filter) {
 }
 
 
-function drawResultView() {
-    waitForData(drawResultView);
-    drawFilter();
-    addSortListeners();
+// ===== SORT & FILTER HELPERS ========================
+
+function sortResults(criteria) {
+    if (criteria == "skill_level") {
+        criteria += "_id";
+    }
+    console.log(criteria);
+    return function(a, b) {
+        if (a[criteria] > b[criteria]) {
+            return 1;
+        } else if (a[criteria] < b[criteria]) {
+            return -1;
+        } else {
+            return 0;
+        }
+    };
 }
 
+function sortDescending(criteria) {
+    if (criteria == "skill_level") {
+        criteria += "_id";
+    }
+    console.log(criteria);
+    return function(a, b) {
+        if (a[criteria] < b[criteria]) {
+            return 1;
+        } else if (a[criteria] > b[criteria]) {
+            return -1;
+        } else {
+            return 0;
+        }
+    };
+}
+
+function filterResults(criteria_list, value_list) {
+    return function(pref) {
+        var keep = true;
+        for (var i = 0; i < criteria_list.length; i++) {
+            if (pref[criteria_list[i]] != value_list[i]) {
+                keep = false;
+            }
+        }
+        return keep;
+    }
+}
+
+
+// ===== DRAW RESULTS HELPERS =========================
+
+function drawResultData(current_pref, clone) {
+    clone.classList.remove("template");
+//  clone.classList.add("hide");
+
+    clone.setAttribute("data-id", current_pref.id);
+    clone.getElementsByClassName("thumb")[0].setAttribute('src', current_pref.img_path);
+    clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.first_name;
+    clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
+    clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
+    clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
+    clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
+    clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
+    clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+}
+
+function drawResultLocation(current_pref, clone) {
+    var location_cell = clone.getElementsByClassName("suburbs")[0];
+    var suburb_list = current_pref.suburbs;
+
+    if (suburb_list.length > 0) {
+        console.log("suburb_list: " + suburb_list);
+        for (var i = 0; i < suburb_list.length; i++) {
+            // console.log(suburb_list[j].sub_name);
+            var name_span = document.createElement("span");
+            name_span.innerHTML += suburb_list[i].sub_name;
+            location_cell.appendChild(name_span);
+        }
+    } else {
+        location_cell.innerHTML += '';
+    }
+}
 
 function drawResultList(data) {
 
@@ -74,108 +151,12 @@ function drawResultList(data) {
     }
 }
 
-function sortResults(criteria) {
-    if (criteria == "skill_level") {
-        criteria += "_id";
-    }
-    console.log(criteria);
-    return function(a, b) {
-        if (a[criteria] > b[criteria]) {
-            return 1;
-        } else if (a[criteria] < b[criteria]) {
-            return -1;
-        } else {
-            return 0;
-        }
-    };
-}
 
-
-function sortDescending(criteria) {
-    if (criteria == "skill_level") {
-        criteria += "_id";
-    }
-    console.log(criteria);
-    return function(a, b) {
-        if (a[criteria] < b[criteria]) {
-            return 1;
-        } else if (a[criteria] > b[criteria]) {
-            return -1;
-        } else {
-            return 0;
-        }
-    };
-}
-
-
-function filterResults(criteria_list, value_list) {
-    return function(pref) {
-        var keep = true;
-        for (var i = 0; i < criteria_list.length; i++) {
-            if (pref[criteria_list[i]] != value_list[i]) {
-                keep = false;
-            }
-        }
-        return keep;
-    }
-}
-
-
-function drawResultData(current_pref, clone) {
-    clone.classList.remove("template");
-//  clone.classList.add("hide");
-
-    clone.setAttribute("data-id", current_pref.id);
-    clone.getElementsByClassName("thumb")[0].setAttribute('src', current_pref.img_path);
-    clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.first_name;
-    clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
-    clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
-    clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
-    clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
-    clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
-    clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
-}
-
-
-function drawResultLocation(current_pref, clone) {
-    var location_cell = clone.getElementsByClassName("suburbs")[0];
-    var suburb_list = current_pref.suburbs;
-
-    if (suburb_list.length > 0) {
-        console.log("suburb_list: " + suburb_list);
-        for (var i = 0; i < suburb_list.length; i++) {
-            // console.log(suburb_list[j].sub_name);
-            var name_span = document.createElement("span");
-            name_span.innerHTML += suburb_list[i].sub_name;
-            location_cell.appendChild(name_span);
-        }
-    } else {
-        location_cell.innerHTML += '';
-    }
-}
-
-
-function drawFilter() {
-    var parent = document.getElementById("search_fields");
-    var filter_lists = ["dance_list", "role_list", "goal_list"];
-    var default_selection = 1;
-    for (var i = 0; i < filter_lists.length; i++) {
-        var current_select = parent.getElementsByClassName(filter_lists[i])[0];
-        drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
-        addFilterListener(current_select);
-    }
-    // addSearchListener();
-}
+// ===== ADD LISTENERS ================================
 
 function addFilterListener(select_element) {
     select_element.addEventListener("change", checkFilter);
 }
-
-//function addSearchListener() {
-//    var parent = document.getElementById("search_fields");
-//    var search_button = parent.getElementsByClassName("search")[0];
-//    search_button.addEventListener("click", checkFilter);
-//}
 
 function addSortListeners() {
     var header = document.getElementById("results_header");
@@ -191,6 +172,19 @@ function addSortListeners() {
     }
 }
 
+
+// ===== DRAW RESULTS PAGE ============================
+
+function drawFilter() {
+    var parent = document.getElementById("search_fields");
+    var filter_lists = ["dance_list", "role_list", "goal_list"];
+    var default_selection = 1;
+    for (var i = 0; i < filter_lists.length; i++) {
+        var current_select = parent.getElementsByClassName(filter_lists[i])[0];
+        drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
+        addFilterListener(current_select);
+    }
+}
 
 function checkFilter() {
     var parent = document.getElementById("search_fields");
@@ -220,7 +214,6 @@ function checkFilter() {
     sortFilteredList(filtered_data, sort_criteria, is_ascending);
 }
 
-
 function sortFilteredList(filtered_data, sort_criteria, is_ascending) {
     if (sort_criteria == "skill_level")  {
         sort_criteria = "skill_level_id"
@@ -236,4 +229,13 @@ function sortFilteredList(filtered_data, sort_criteria, is_ascending) {
     console.log("sort event");
     console.log("sorted: " + sorted_data);
     drawResultList(sorted_data);
+}
+
+
+// ===== INIT SEARCH RESULTS VIEW =====================
+
+function drawResultView() {
+    waitForData(drawResultView);
+    drawFilter();
+    addSortListeners();
 }

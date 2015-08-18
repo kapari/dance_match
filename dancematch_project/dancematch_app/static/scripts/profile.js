@@ -1,4 +1,6 @@
-// PROFILE VIEW
+// ===== PROFILE VIEW =================================
+// ====================================================
+
 
 function drawProfile(data) {
     var profile = document.getElementById("profile");
@@ -26,6 +28,7 @@ function drawProfile(data) {
     toggle_button = profile.getElementsByClassName("edit_toggle")[0];
     addToggleListener(toggle_button);
 
+    // TODO pull these out; have them wait independently
     // Wait until have user_id before drawing others
     ApiCall("/api_dance_prefs/", drawPrefItems, "pref_data");
     ApiCall("/api_suburbs/", drawSuburbs, "suburb_data");
@@ -60,7 +63,6 @@ function drawSuburbs(data, user_id) {
             current_hub.appendChild(suburb);
         }
     }
-
 }
 
 function addProfileListeners() {

@@ -1,101 +1,83 @@
+// ===== MAIN =========================================
+// ====================================================
 
-//var user_id = {{ user.id }}
-// var dancer_id = {{ user.dancer.id }}
+
+// ===== CREATE NAMESPACE =============================
+
 var models = {};
 
-// TODO: finish implementing namespace
 var DM = {
     user_id: 0,
+    api_counter: 0,
+    api_loaded: false,
     model_list: ["dance", "role", "skill_level", "activity", "goal"],
     model_list_list: ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"],
     profile_data: [],
     pref_data: [],
-    suburb_data: [],
-    sort_state: {"name_or_level": "up or down"}
+    suburb_data: []
+    // TODO: combine profile, pref, and model data into dict
 //        model: {
 //            items: []
 //        }
 };
 
 document.write("test for user ID: " + DM.user_id);
-// Draw Loaded Data
 
+// ===== HANDLE MODEL APIS ============================
 
-function drawDropdown(select, data, name_field, id_field, selected) {
-    for (var i = 0; i < data.length; i++) {
-        var option = document.createElement('option');
-        option.innerHTML = data[i][name_field];
-        option.setAttribute("value", data[i][id_field]);
-        if (data[i][name_field] == selected) {
-            option.setAttribute("selected", "selected");
+function waitForData(function_name) {
+    if (!DM.api_loaded) {
+        setTimeout(function_name, 50);
+        console.log("loading...");
+    }
+}
+
+// REST API call to get JSON data
+function ApiCall(url, function_name, save_name) {
+    var request = new XMLHttpRequest();
+    request.open("GET", url);
+
+    //For pre html5 browsers use onstatuschanged
+    request.onloadend = function (e) {
+        var json_string = e.currentTarget.responseText;
+        var data = JSON.parse(json_string);
+        DM[save_name] = data;
+        function_name(data, DM.user_id);
+    };
+    request.send();
+}
+
+// TODO: wrap all api calls together
+function modelApi(object_type) {
+    // get list of e.g. dances for dropdown
+    var url = "/api_" + object_type + "/";
+    var request = new XMLHttpRequest();
+    request.open("GET", url);
+    // console.log(request);
+
+    //For pre html5 browsers use onstatuschanged
+    request.onloadend = function (e) {
+        var json_string = e.currentTarget.responseText;
+        var data = JSON.parse(json_string);
+        window.models[object_type] = data;
+        DM.api_counter++;
+        // console.log(object_type + ": " + api_counter);
+        // console.log(model_list.length);
+        if (DM.api_counter == model_list.length) {
+            DM.api_loaded = true;
         }
-        select.appendChild(option);
-    }
+    };
+    request.send();
+}
+
+// TODO wrap in init function
+var model_list = DM.model_list_list;
+for (var i = 0; i < model_list.length; i++) {
+    modelApi(model_list[i]);
 }
 
 
-function drawPrefRead(parent, current_pref) {
-    var models = DM.model_list;
-    for (var i = 0; i < models.length; i++) {
-        // console.log(models[i]);
-        parent.getElementsByClassName(models[i])[0].innerHTML = current_pref[models[i]];
-    }
-    parent.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
-}
-
-
-function drawPrefEdit(parent, current_pref) {
-    var models = DM.model_list;
-    var model_lists = DM.model_list_list;
-    for (var i = 0; i < models.length; i++) {
-        drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
-                window.models[model_lists[i]], "name", "id", current_pref[models[i]]);
-    }
-    parent.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
-}
-
-
-function drawPrefList(parent, template, data, user_id) {
-    var sorted_data = data.sort(sortResults("dance"));
-
-    for (var i = 0; i < sorted_data.length; i++) {
-        var current_pref = sorted_data[i];
-
-        // Draw pref only if user id matches current user
-        if (!user_id || current_pref.user_id == user_id) {
-            // console.log("user_id " + user_id);
-            var clone = template.cloneNode(true);
-            clone.classList.remove("template");
-            clone.setAttribute("data-id", current_pref.id);
-
-            // Read-only div
-            drawPrefRead(clone, current_pref);
-
-            // Edit div
-            var edit_div = clone.getElementsByClassName("edit")[0];
-            edit_div.classList.add("hide");
-            drawPrefEdit(clone, current_pref);
-
-            toggle_button = clone.getElementsByClassName("edit_toggle")[0];
-            addToggleListener(toggle_button);
-
-            parent.appendChild(clone);
-        }
-    }
-}
-
-
-function drawPrefItems(data) {
-    var user_id = DM.user_id;
-    var pl = document.getElementById("pref_list");
-    var template = pl.getElementsByClassName("template")[0];
-
-    drawPrefList(pl, template, data, user_id);
-    addPrefListeners("pref_list");
-    drawResultView();
-
-}
-
+// ===== AJAX POST ====================================
 
 function onPrefUpdate(e) {
     var group_div = e.target.parentElement;
@@ -146,6 +128,84 @@ function onPrefUpdate(e) {
     sendPost(update, "/update_pref/");
 }
 
+function sendPost(item, url) {
+    var form_data = new FormData();
+
+    for (var key in item) {
+        form_data.append(key, item[key]);
+    }
+
+    var request = new XMLHttpRequest();
+    request.open("POST", url);
+    request.send(form_data);
+}
+
+// ===== DRAW USER DANCE PREFS ===============
+
+// (also used on search page)
+function drawDropdown(select, data, name_field, id_field, selected) {
+    for (var i = 0; i < data.length; i++) {
+        var option = document.createElement('option');
+        option.innerHTML = data[i][name_field];
+        option.setAttribute("value", data[i][id_field]);
+        if (data[i][name_field] == selected) {
+            option.setAttribute("selected", "selected");
+        }
+        select.appendChild(option);
+    }
+}
+
+function drawPrefRead(parent, current_pref) {
+    var models = DM.model_list;
+    for (var i = 0; i < models.length; i++) {
+        // console.log(models[i]);
+        parent.getElementsByClassName(models[i])[0].innerHTML = current_pref[models[i]];
+    }
+    parent.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+}
+
+function drawPrefEdit(parent, current_pref) {
+    var models = DM.model_list;
+    var model_lists = DM.model_list_list;
+    for (var i = 0; i < models.length; i++) {
+        drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
+                window.models[model_lists[i]], "name", "id", current_pref[models[i]]);
+    }
+    parent.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
+}
+
+function drawPrefList(parent, template, data, user_id) {
+    var sorted_data = data.sort(sortResults("dance"));
+
+    for (var i = 0; i < sorted_data.length; i++) {
+        var current_pref = sorted_data[i];
+
+        // Draw pref only if user id matches current user
+        if (!user_id || current_pref.user_id == user_id) {
+            // console.log("user_id " + user_id);
+            var clone = template.cloneNode(true);
+            clone.classList.remove("template");
+            clone.setAttribute("data-id", current_pref.id);
+
+            // Read-only div
+            drawPrefRead(clone, current_pref);
+
+            // Edit div
+            var edit_div = clone.getElementsByClassName("edit")[0];
+            edit_div.classList.add("hide");
+            drawPrefEdit(clone, current_pref);
+
+            toggle_button = clone.getElementsByClassName("edit_toggle")[0];
+            addToggleListener(toggle_button);
+
+            parent.appendChild(clone);
+        }
+    }
+}
+
+
+// ===== ADD LISTENERS: DANCE PREF EDIT & AUTO UPDATE =
+
 function addPrefListeners(parent_id) {
     var pref_list = document.getElementById(parent_id);
     var edit_fields = pref_list.getElementsByClassName("edit_field");
@@ -155,6 +215,31 @@ function addPrefListeners(parent_id) {
     }
 }
 
+function addToggleListener(button) {
+    button.addEventListener("click", function(e) {
+        toggleReadEdit(button);
+    });
+}
+
+function toggleReadEdit(button) {
+    var pref_li = button.parentElement.parentElement;
+    var edit_div = pref_li.getElementsByClassName("edit")[0];
+    var read_div = pref_li.getElementsByClassName("read")[0];
+    edit_div.classList.toggle("hide");
+    read_div.classList.toggle("hide");
+
+    var del_button = pref_li.getElementsByClassName("delete")[0];
+    if (del_button) {
+        del_button.classList.toggle("hide");
+    }
+
+    button.classList.toggle("show_edit");
+    if (button.classList.contains("show_edit")) {
+        button.innerText = "Save";
+    } else {
+        button.innerText = "Edit";
+    }
+}
 
 function updateReadOnly(value, model) {
     var option_list = window.models[model];
@@ -170,70 +255,8 @@ function updateReadOnly(value, model) {
     return text;
 }
 
-// Show/hide
-function addToggleListener(button) {
-    button.addEventListener("click", function(e) {
-        var pref_li = button.parentElement.parentElement;
-        var edit_div = pref_li.getElementsByClassName("edit")[0];
-        var read_div = pref_li.getElementsByClassName("read")[0];
-        var del_button = pref_li.getElementsByClassName("delete")[0];
-        edit_div.classList.toggle("hide");
-        read_div.classList.toggle("hide");
-        del_button.classList.toggle("hide");
-        button.classList.toggle("show_edit");
-        if (button.classList.contains("show_edit")) {
-            button.innerText = "Save";
-        } else {
-            button.innerText = "Edit";
-        }
-    });
-}
 
-function waitForData(function_name) {
-    if (!api_loaded) {
-        setTimeout(function_name, 100);
-        console.log("loading...");
-    }
-}
-
-// AJAX POST
-function sendPost(item, url) {
-    var form_data = new FormData();
-
-    for (var key in item) {
-        form_data.append(key, item[key]);
-    }
-
-    var request = new XMLHttpRequest();
-    request.open("POST", url);
-    request.send(form_data);
-}
-
-// TODO: wrap all api calls together
-var api_counter = 0;
-var api_loaded = false;
-function modelApi(object_type) {
-    // get list of e.g. dances for dropdown
-    var url = "/api_" + object_type + "/";
-    var request = new XMLHttpRequest();
-    request.open("GET", url);
-    // console.log(request);
-
-    //For pre html5 browsers use onstatuschanged
-    request.onloadend = function (e) {
-        var json_string = e.currentTarget.responseText;
-        var data = JSON.parse(json_string);
-        window.models[object_type] = data;
-        api_counter++;
-        // console.log(object_type + ": " + api_counter);
-        // console.log(model_list.length);
-        if (api_counter == model_list.length) {
-            api_loaded = true;
-        }
-    };
-    request.send();
-}
-
+// ===== CREATE NEW PREF ==============================
 
 // TODO: run on button click; break into smaller functions
 function newPref() {
@@ -272,31 +295,6 @@ function newPref() {
 }
 
 
-// END RESULTS VIEW -------------------------
-
-
-// BEGIN WEB REST API CALL TO GET JSON DATA
-function ApiCall(url, function_name, save_name) {
-    var request = new XMLHttpRequest();
-    request.open("GET", url);
-
-    //For pre html5 browsers use onstatuschanged
-    request.onloadend = function (e) {
-        var json_string = e.currentTarget.responseText;
-        var data = JSON.parse(json_string);
-        DM[save_name] = data;
-        function_name(data, DM.user_id);
-    };
-    request.send();
-}
-
-
-var model_list = DM.model_list_list;
-for (var i = 0; i < model_list.length; i++) {
-    modelApi(model_list[i]);
-}
-
-
 function viewListener() {
 
     //ApiCall("/api_profile/", drawProfile, "profile_data");
@@ -315,6 +313,21 @@ function viewListener() {
 }
 
 
+// ===== INIT =========================================
+
+// TODO: Create Init: gather data, draw things, add listeners
+
+// TODO refactor; move to init
+function drawPrefItems(data) {
+    var user_id = DM.user_id;
+    var pl = document.getElementById("pref_list");
+    var template = pl.getElementsByClassName("template")[0];
+
+    drawPrefList(pl, template, data, user_id);
+    addPrefListeners("pref_list");
+    drawResultView();
+
+}
 
 document.addEventListener("DOMContentLoaded", function(e) {
     // API call for profile first, to get user_id
@@ -331,4 +344,3 @@ document.addEventListener("DOMContentLoaded", function(e) {
     request.send();
 });
 
-// TODO: Init: create namespace, gather data, draw things, add listeners
