@@ -176,11 +176,13 @@ function addToggleListener(button) {
         var pref_li = button.parentElement.parentElement;
         var edit_div = pref_li.getElementsByClassName("edit")[0];
         var read_div = pref_li.getElementsByClassName("read")[0];
+        var del_button = pref_li.getElementsByClassName("delete")[0];
         edit_div.classList.toggle("hide");
         read_div.classList.toggle("hide");
+        del_button.classList.toggle("hide");
         button.classList.toggle("show_edit");
         if (button.classList.contains("show_edit")) {
-            button.innerText = "Done";
+            button.innerText = "Save";
         } else {
             button.innerText = "Edit";
         }
