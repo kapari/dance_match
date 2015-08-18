@@ -234,6 +234,7 @@ function sortFilteredList(filtered_data, sort_criteria, is_ascending) {
 
 // ===== INIT SEARCH RESULTS VIEW =====================
 
+// TODO: move to main init function?
 function drawResultView() {
     waitForData(drawResultView);
     drawFilter();
