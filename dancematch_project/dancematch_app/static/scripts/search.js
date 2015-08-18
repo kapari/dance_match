@@ -162,33 +162,20 @@ function drawFilter() {
     for (var i = 0; i < filter_lists.length; i++) {
         var current_select = parent.getElementsByClassName(filter_lists[i])[0];
         drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
-        var property = filter_lists[i].split("_")[0];
-        console.log(property);
-        // addFilterListener(current_select, property);
+        addFilterListener(current_select);
     }
-    addSearchListener();
+    // addSearchListener();
 }
 
-//function addFilterListener(select_element, property) {
-//    select_element.addEventListener("change", function(e) {
-//        var value = e.target.value;
-//        var data = DM.pref_data;
-//        console.log("value: " + value);
-//        console.log("property: " + property);
-//
-//        var property_list = [];
-//        var value_list = [];
-//        var filtered_data = data.filter(filterResults(["dance_id", "role_id"], [6, 1]));
-//
-//        drawResultList(filtered_data);
-//    })
+function addFilterListener(select_element) {
+    select_element.addEventListener("change", checkFilter);
+}
+
+//function addSearchListener() {
+//    var parent = document.getElementById("search_fields");
+//    var search_button = parent.getElementsByClassName("search")[0];
+//    search_button.addEventListener("click", checkFilter);
 //}
-
-function addSearchListener() {
-    var parent = document.getElementById("search_fields");
-    var search_button = parent.getElementsByClassName("search")[0];
-    search_button.addEventListener("click", checkFilter);
-}
 
 function addSortListeners() {
     var header = document.getElementById("results_header");
@@ -227,10 +214,10 @@ function checkFilter() {
 
     var header = document.getElementById("results_header");
     var sorted = header.getElementsByClassName("sorted")[0];
-    var ascending = sorted.classList.contains("ascending");
+    var is_ascending = sorted.classList.contains("ascending");
     var sort_criteria = sorted.getAttribute("id");
 
-    sortFilteredList(filtered_data, sort_criteria, ascending);
+    sortFilteredList(filtered_data, sort_criteria, is_ascending);
 }
 
 
