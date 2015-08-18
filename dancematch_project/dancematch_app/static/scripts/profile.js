@@ -48,7 +48,7 @@ function drawSuburbs(data, user_id) {
             if (!(current_hub_id in hub_ids)) {
                 var hub_ul = document.createElement("ul");
                 hub_ul.setAttribute("data-id", current_hub_id);
-                hub_ul.innerHTML = pref_suburb["hub_name"];
+                hub_ul.innerHTML = pref_suburb["hub_name"] + " Area";
                 hub_ids[current_hub_id] = hub_ul;
                 suburb_div.appendChild(hub_ul);
             }

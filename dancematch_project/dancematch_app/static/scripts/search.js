@@ -91,6 +91,23 @@ function sortResults(criteria) {
 }
 
 
+function sortDescending(criteria) {
+    if (criteria == "skill_level") {
+        criteria += "_id";
+    }
+    console.log(criteria);
+    return function(a, b) {
+        if (a[criteria] < b[criteria]) {
+            return 1;
+        } else if (a[criteria] > b[criteria]) {
+            return -1;
+        } else {
+            return 0;
+        }
+    };
+}
+
+
 function filterResults(criteria_list, value_list) {
     return function(pref) {
         var keep = true;
@@ -173,6 +190,20 @@ function addSearchListener() {
     search_button.addEventListener("click", checkFilter);
 }
 
+function addSortListeners() {
+    var header = document.getElementById("results_header");
+    var sortable = header.getElementsByClassName("sortable");
+    for (var i = 0; i < sortable.length; i++) {
+        sortable[i].addEventListener("click", function(e) {
+            header.getElementsByClassName("sorted")[0].classList.remove("sorted");
+            e.target.parentElement.classList.add("sorted");
+            e.target.parentElement.classList.toggle("ascending");
+            checkFilter();
+            // TODO: remove "ascending" from inactive header
+        })
+    }
+}
+
 
 function checkFilter() {
     var parent = document.getElementById("search_fields");
@@ -196,31 +227,25 @@ function checkFilter() {
 
     var header = document.getElementById("results_header");
     var sorted = header.getElementsByClassName("sorted")[0];
+    var ascending = sorted.classList.contains("ascending");
     var sort_criteria = sorted.getAttribute("id");
 
-    sortFilteredList(filtered_data, sort_criteria);
+    sortFilteredList(filtered_data, sort_criteria, ascending);
 }
 
 
-function addSortListeners() {
-    var header = document.getElementById("results_header");
-    var sortable = header.getElementsByClassName("sortable");
-    for (var i = 0; i < sortable.length; i++) {
-        sortable[i].addEventListener("click", function(e) {
-            header.getElementsByClassName("sorted")[0].classList.remove("sorted");
-            e.target.parentElement.classList.add("sorted");
-            checkFilter();
-        })
-    }
-}
-
-function sortFilteredList(filtered_data, sort_criteria) {
+function sortFilteredList(filtered_data, sort_criteria, is_ascending) {
     if (sort_criteria == "skill_level")  {
         sort_criteria = "skill_level_id"
     } else {
         sort_criteria = "first_name"
     }
-    var sorted_data = filtered_data.sort(sortResults(sort_criteria));
+    var sorted_data = {};
+    if (is_ascending) {
+        sorted_data = filtered_data.sort(sortResults(sort_criteria));
+    } else {
+        sorted_data = filtered_data.sort(sortDescending(sort_criteria));
+    }
     console.log("sort event");
     console.log("sorted: " + sorted_data);
     drawResultList(sorted_data);
