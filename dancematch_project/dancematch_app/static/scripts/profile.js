@@ -147,8 +147,11 @@ function drawPrefList(parent, template, data, user_id) {
             edit_div.classList.add("hide");
             drawPrefEdit(clone, current_pref);
 
-            toggle_button = clone.getElementsByClassName("edit_toggle")[0];
+            var toggle_button = clone.getElementsByClassName("edit_toggle")[0];
             addToggleListener(toggle_button);
+
+            var delete_button = clone.getElementsByClassName("delete")[0];
+            addDeletePrefListener(delete_button);
 
             parent.appendChild(clone);
         }
@@ -156,7 +159,7 @@ function drawPrefList(parent, template, data, user_id) {
 }
 
 
-// ===== ADD LISTENERS: DANCE PREF EDIT & AUTO UPDATE =
+// ===== ADD LISTENERS: DANCE PREF EDIT & OPTIMISTIC UPDATE
 
 function addPrefListeners(parent_id) {
     var pref_list = document.getElementById(parent_id);
@@ -165,6 +168,10 @@ function addPrefListeners(parent_id) {
         var current_field = edit_fields[i];
         current_field.addEventListener("change", onPrefUpdate);
     }
+}
+
+function addDeletePrefListener(button) {
+    button.addEventListener("click", onPrefDelete);
 }
 
 function addToggleListener(button) {
@@ -208,7 +215,56 @@ function updateReadOnly(value, model) {
 }
 
 
-// ===== CREATE NEW PREF ==============================
+// ===== CREATE/UPDATE PREF ===========================
+
+function onPrefUpdate(e) {
+    var group_div = e.target.parentElement;
+    var pref_id_div = group_div.parentElement;
+    var pref_id = pref_id_div.getAttribute("data-id");
+
+    var update = {"user_id": DM.user_id,
+                  "pref_id": pref_id};
+    var value = e.target.value;
+    var text = '';
+
+    // Build update dict & Change values in read-only
+    // TODO: loop
+//                var models = DM.model_list;
+//                var model_lists = DM.model_list_list;
+//                for (i = 0; i < models.length; i++) {
+//                    if (e.target.classList.contains(model_lists[i])) {
+//                        update[models[i]] = value;
+//                        text = updateReadOnly(value, model_lists[i]);
+//                        pref_id_div.getElementsByClassName(models[i])[0].innerText = text;
+//                }
+
+    if (e.target.classList.contains("dance_list")) {
+        update["dance"] = value;
+        text = updateReadOnly(value, "dance_list");
+        pref_id_div.getElementsByClassName("dance")[0].innerText = text;
+    } else if (e.target.classList.contains("role_list")){
+        update["role"] = value;
+        text = updateReadOnly(value, "role_list");
+        pref_id_div.getElementsByClassName("role")[0].innerText = text;
+    } else if (e.target.classList.contains("skill_level_list")){
+        update["skill_level"] = value;
+        text = updateReadOnly(value, "skill_level_list");
+        pref_id_div.getElementsByClassName("skill_level")[0].innerText = text;
+    } else if (e.target.classList.contains("activity_list")){
+        update["activity"] = value;
+        text = updateReadOnly(value, "activity_list");
+        pref_id_div.getElementsByClassName("activity")[0].innerText = text;
+    } else if (e.target.classList.contains("goal_list")){
+        update["goal"] = value;
+        text = updateReadOnly(value, "goal_list");
+        pref_id_div.getElementsByClassName("goal")[0].innerText = text;
+    } else if (e.target.classList.contains("notes_textarea")){
+        update["notes"] = value;
+        pref_id_div.getElementsByClassName("notes")[0].innerText = value;
+    }
+
+    sendPost(update, "/update_pref/");
+}
 
 // TODO: run on button click; break into smaller functions
 function newPref() {
@@ -246,7 +302,6 @@ function newPref() {
     });
 }
 
-
 function viewListener() {
 
     //ApiCall("/api_profile/", drawProfile, "profile_data");
@@ -268,3 +323,19 @@ function viewListener() {
 // ===== DELETE PREF ==================================
 
 // TODO delete pref
+function onPrefDelete(e) {
+    var group_div = e.target.parentElement;
+    var pref_id_div = group_div.parentElement;
+    var pref_id = pref_id_div.getAttribute("data-id");
+
+    var delete_pref = {"user_id": DM.user_id,
+                  "pref_id": pref_id,
+                  "action": "DELETE"};
+    console.log("delete_pref: " + delete_pref);
+    hideDeleted(pref_id_div);
+    sendPost(delete_pref, "/update_pref/");
+}
+
+function hideDeleted(pref_li) {
+    pref_li.classList.add("hide");
+}

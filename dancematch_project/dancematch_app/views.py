@@ -67,7 +67,6 @@ def profile(request, dancer_id):
                                             'dance_prefs': dance_prefs,
                                             })
 
-
 def dances(request):
     all_dances = Dance.objects.all()
     template = loader.get_template('dances.html')
@@ -315,39 +314,41 @@ def update_pref(request):
             dance_pref.user = user
             dance_pref.dancer = user.dancer
 
+        if request.POST["action"] == "DELETE":
+            dance_pref.delete()
+        else:
+            if "role" in request.POST:
+                role_id = int(request.POST.get("role"))
+                role = get_object_or_404(DanceRole, pk=role_id)
+                dance_pref.role = role
 
-        if "role" in request.POST:
-            role_id = int(request.POST.get("role"))
-            role = get_object_or_404(DanceRole, pk=role_id)
-            dance_pref.role = role
+            if "dance" in request.POST:
+                dance_id = int(request.POST.get("dance"))
+                dance = get_object_or_404(Dance, pk=dance_id)
+                dance_pref.dance = dance
 
-        if "dance" in request.POST:
-            dance_id = int(request.POST.get("dance"))
-            dance = get_object_or_404(Dance, pk=dance_id)
-            dance_pref.dance = dance
+            if "skill_level" in request.POST:
+                skill_level_id = int(request.POST.get("skill_level"))
+                if skill_level_id:
+                    skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
+                    dance_pref.skill_level = skill_level
 
-        if "skill_level" in request.POST:
-            skill_level_id = int(request.POST.get("skill_level"))
-            if skill_level_id:
-                skill_level = SkillLevel.objects.filter(pk=skill_level_id)[0]
-                dance_pref.skill_level = skill_level
+            if "activity" in request.POST:
+                activity_id = int(request.POST.get("activity"))
+                if activity_id:
+                    activity = Activity.objects.filter(pk=activity_id)[0]
+                    dance_pref.activity = activity
 
-        if "activity" in request.POST:
-            activity_id = int(request.POST.get("activity"))
-            if activity_id:
-                activity = Activity.objects.filter(pk=activity_id)[0]
-                dance_pref.activity = activity
+            if "goal" in request.POST:
+                goal_id = int(request.POST.get("goal"))
+                if goal_id:
+                    goal = Goals.objects.filter(pk=goal_id)[0]
+                    dance_pref.goal = goal
 
-        if "goal" in request.POST:
-            goal_id = int(request.POST.get("goal"))
-            if goal_id:
-                goal = Goals.objects.filter(pk=goal_id)[0]
-                dance_pref.goal = goal
+            if "notes" in request.POST:
+                dance_pref.notes = request.POST["notes"]
 
-        if "notes" in request.POST:
-            dance_pref.notes = request.POST["notes"]
-
-        dance_pref.save()
+            dance_pref.save()
 
         return HttpResponseRedirect("/profile_ajax/")
 
@@ -372,3 +373,4 @@ def img_upload(request):
     template = loader.get_template('upload.html')
     context = RequestContext(request, {})
     return HttpResponse(template.render(context))
+

@@ -80,55 +80,6 @@ for (var i = 0; i < model_list.length; i++) {
 
 // ===== AJAX POST ====================================
 
-function onPrefUpdate(e) {
-    var group_div = e.target.parentElement;
-    var pref_id_div = group_div.parentElement;
-    var pref_id = pref_id_div.getAttribute("data-id");
-
-    var update = {"user_id": DM.user_id,
-                  "pref_id": pref_id};
-    var value = e.target.value;
-    var text = '';
-
-    // Build update dict & Change values in read-only
-    // TODO: loop
-//                var models = DM.model_list;
-//                var model_lists = DM.model_list_list;
-//                for (i = 0; i < models.length; i++) {
-//                    if (e.target.classList.contains(model_lists[i])) {
-//                        update[models[i]] = value;
-//                        text = updateReadOnly(value, model_lists[i]);
-//                        pref_id_div.getElementsByClassName(models[i])[0].innerText = text;
-//                }
-
-    if (e.target.classList.contains("dance_list")) {
-        update["dance"] = value;
-        text = updateReadOnly(value, "dance_list");
-        pref_id_div.getElementsByClassName("dance")[0].innerText = text;
-    } else if (e.target.classList.contains("role_list")){
-        update["role"] = value;
-        text = updateReadOnly(value, "role_list");
-        pref_id_div.getElementsByClassName("role")[0].innerText = text;
-    } else if (e.target.classList.contains("skill_level_list")){
-        update["skill_level"] = value;
-        text = updateReadOnly(value, "skill_level_list");
-        pref_id_div.getElementsByClassName("skill_level")[0].innerText = text;
-    } else if (e.target.classList.contains("activity_list")){
-        update["activity"] = value;
-        text = updateReadOnly(value, "activity_list");
-        pref_id_div.getElementsByClassName("activity")[0].innerText = text;
-    } else if (e.target.classList.contains("goal_list")){
-        update["goal"] = value;
-        text = updateReadOnly(value, "goal_list");
-        pref_id_div.getElementsByClassName("goal")[0].innerText = text;
-    } else if (e.target.classList.contains("notes_textarea")){
-        update["notes"] = value;
-        pref_id_div.getElementsByClassName("notes")[0].innerText = value;
-    }
-
-    sendPost(update, "/update_pref/");
-}
-
 function sendPost(item, url) {
     var form_data = new FormData();
 
