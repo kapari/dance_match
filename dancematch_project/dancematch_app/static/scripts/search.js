@@ -235,13 +235,3 @@ function sortFilteredList(filtered_data, sort_criteria, is_ascending) {
     console.log("sorted: " + sorted_data);
     drawResultList(sorted_data);
 }
-
-
-// ===== INIT SEARCH RESULTS VIEW =====================
-
-// TODO: move to main init function?
-//function drawResultView() {
-//    // waitForData(drawResultView);
-//    drawFilter();
-//    addSortListeners();
-//}

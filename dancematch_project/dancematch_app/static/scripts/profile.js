@@ -150,9 +150,6 @@ function drawPrefEdit(parent, current_pref) {
     var models = DM.model_list;
     var model_lists = DM.model_list_list;
     for (var i = 0; i < models.length; i++) {
-        // console.log("DM[models[i]: " + DM[models[i]]);
-        //drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
-        //        window.models[model_lists[i]], "name", "id", current_pref[models[i]]);
         drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
             DM[model_lists[i]], "name", "id", current_pref[models[i]]);
 
@@ -167,9 +164,6 @@ function drawUserPrefs() {
 
     for (var i = 0; i < sorted_data.length; i++) {
         var current_pref = sorted_data[i];
-
-        // Draw pref only if user id matches current user
-        // console.log("user_id " + user_id);
         var clone = template.cloneNode(true);
         clone.classList.remove("template");
         clone.setAttribute("data-id", current_pref.id);
