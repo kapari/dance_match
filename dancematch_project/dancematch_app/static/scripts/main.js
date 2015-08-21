@@ -22,15 +22,15 @@ document.write("test for user ID: " + DM.user_id);
 
 // ===== HANDLE MODEL APIS ============================
 
-function waitForData(function_name) {
-    if (!DM.api_loaded) {
-        setTimeout(function_name, 50);
-        console.log("loading...");
-        if (DM.user_id != 0) {
-            DM.api_loaded = true;
-        }
-    }
-}
+//function waitForData(function_name) {
+//    if (!DM.api_loaded) {
+//        setTimeout(function_name, 50);
+//        console.log("loading...");
+//        if (DM.user_id != 0) {
+//            DM.api_loaded = true;
+//        }
+//    }
+//}
 
 // REST API call to get JSON data
 // currently for profile_data, all_dance_prefs and suburb_data
@@ -96,18 +96,6 @@ function sendPost(item, url) {
 
 // ===== INIT =========================================
 
-// TODO: Create Init: gather data, draw things, add listeners
-
-// TODO refactor; move to init
-function drawPrefItems(data) {
-    var user_id = DM.user_id;
-    var pl = document.getElementById("pref_list");
-    var template = pl.getElementsByClassName("template")[0];
-
-    drawPrefList(pl, template, DM.user_dances);
-    addPrefListeners("pref_list");
-}
-
 function getAppStatus() {
     // API call for profile first, to get user_id
     var request = new XMLHttpRequest();
@@ -117,29 +105,49 @@ function getAppStatus() {
     request.onloadend = function (e) {
         var json_string = e.currentTarget.responseText;
         var data = JSON.parse(json_string);
-
-        DM.user_profile = data["user_profile"];
-        DM.user_suburbs = data["user_suburbs"];
-        DM.user_dances = data["user_dances"];
-
-        DM.dance_list = data["dances"];
-        DM.role_list = data["roles"];
-        DM.skill_level_list = data["skill_levels"];
-        DM.activity_list = data["activities"];
-        DM.goal_list = data["goals"];
-        DM.city_list = data["cities"];
-        DM.suburb_list = data["suburbs"];
-
-        DM.all_dance_prefs = data["all_dance_prefs"];
-
-        drawProfile(data["user_profile"]);
-        drawPrefItems(DM.user_dances);
-        drawSuburbs(DM.user_suburbs);
-        drawFilter();
-        addSortListeners();
+        loadNamespace(data);
     };
     request.send();
 }
+
+function loadNamespace(data) {
+    DM.user_profile = data["user_profile"];
+    DM.user_suburbs = data["user_suburbs"];
+    DM.user_dances = data["user_dances"];
+
+    DM.user_id = DM.user_profile[0]["id"];
+
+    DM.dance_list = data["dances"];
+    DM.role_list = data["roles"];
+    DM.skill_level_list = data["skill_levels"];
+    DM.activity_list = data["activities"];
+    DM.goal_list = data["goals"];
+    DM.city_list = data["cities"];
+    DM.suburb_list = data["suburbs"];
+
+    DM.all_dance_prefs = data["all_dance_prefs"];
+
+    DM.api_loaded = true;
+}
+
+function drawApp() {
+    if (!DM.api_loaded) {
+        setTimeout(drawApp, 10)
+    } else {
+        drawProfile();
+        drawUserPrefs();
+        drawUserSuburbs();
+        drawFilter();
+        addSortListeners();
+    }
+}
+
+function init() {
+    getAppStatus();
+    drawApp();
+}
+
+document.addEventListener("DOMContentLoaded", init);
 
 //document.addEventListener("DOMContentLoaded", function(e) {
 //    // API call for profile first, to get user_id
@@ -155,5 +163,3 @@ function getAppStatus() {
 //    };
 //    request.send();
 //});
-
-document.addEventListener("DOMContentLoaded", getAppStatus);

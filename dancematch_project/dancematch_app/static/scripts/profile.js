@@ -4,11 +4,10 @@
 
 // ===== DRAW USER PROFILE INFO =======================
 
-function drawProfile(data) {
+function drawProfile() {
+    var profile_data = DM.user_profile[0];
     var profile = document.getElementById("profile");
     // only one dict in list
-    var profile_data = data[0];
-    DM.user_id = profile_data["id"];
     var header = document.getElementById("dancer_name");
     header.innerHTML = profile_data["first_name"] + " " + profile_data["last_name"];
 
@@ -53,7 +52,8 @@ function drawSuburbChooser() {
     }
 }
 
-function drawSuburbs(data) {
+function drawUserSuburbs() {
+    var data = DM.user_suburbs;
     var suburb_div = document.getElementById("suburb_list");
     var hubs = suburb_div.getElementsByTagName("ul");
     // dict[1] = ul with data-id 1
@@ -160,7 +160,9 @@ function drawPrefEdit(parent, current_pref) {
     parent.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 }
 
-function drawPrefList(parent, template, data) {
+function drawUserPrefs() {
+    var pl = document.getElementById("pref_list");
+    var template = pl.getElementsByClassName("template")[0];
     var sorted_data = DM.user_dances.sort(sortResults("dance"));
 
     for (var i = 0; i < sorted_data.length; i++) {
@@ -186,9 +188,9 @@ function drawPrefList(parent, template, data) {
         var delete_button = clone.getElementsByClassName("delete")[0];
         addDeletePrefListener(delete_button);
 
-        parent.appendChild(clone);
-
+        pl.appendChild(clone);
     }
+    addPrefListeners("pref_list");
 }
 
 
