@@ -347,6 +347,7 @@ def api_app_status(request):
     user_pref_output = []
     for pref in user_dance_prefs:
         prefdata = {}
+        prefdata["id"] = pref.id
         prefdata["dance_id"] = pref.dance.id
         prefdata["dance"] = pref.dance.name
         prefdata["role_id"] = pref.role.id

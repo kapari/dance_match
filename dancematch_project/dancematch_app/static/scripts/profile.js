@@ -252,7 +252,8 @@ function onPrefUpdate(e) {
     var pref_id = pref_id_div.getAttribute("data-id");
 
     var update = {"user_id": DM.user_id,
-                  "pref_id": pref_id};
+                  "pref_id": pref_id,
+                  "action": "SAVE"};
     var value = e.target.value;
     var text = '';
 
@@ -297,8 +298,6 @@ function onPrefUpdate(e) {
 
 // TODO: run on button click; break into smaller functions
 function newPref() {
-    // waitForData(newPref);
-
     var parent = document.getElementById("new_pref");
     var template = document.getElementsByClassName("template")[0];
     var clone = template.cloneNode(true);
@@ -345,7 +344,6 @@ function viewListener() {
     //    console.log("waiting...");
     //}
     newPref();
-    drawResultView();
 }
 
 
