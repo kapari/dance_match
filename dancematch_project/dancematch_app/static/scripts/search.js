@@ -178,12 +178,15 @@ function addSortListeners() {
 function drawFilter() {
     var parent = document.getElementById("search_fields");
     var filter_lists = ["dance_list", "role_list", "goal_list"];
+    console.log("filter_lists: " + filter_lists);
     var default_selection = 1;
     for (var i = 0; i < filter_lists.length; i++) {
+        var current_list = filter_lists[i];
+        console.log("current_list: " + current_list);
         var current_select = parent.getElementsByClassName(filter_lists[i])[0];
-        // drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
         drawDropdown(current_select, DM[filter_lists[i]], "name", "id", default_selection);
-
+        console.log("current_select: " + current_select);
+        console.log("filter_list[i]: " + filter_lists[i]);
         addFilterListener(current_select);
     }
 }
@@ -237,8 +240,8 @@ function sortFilteredList(filtered_data, sort_criteria, is_ascending) {
 // ===== INIT SEARCH RESULTS VIEW =====================
 
 // TODO: move to main init function?
-function drawResultView() {
-    waitForData(drawResultView);
-    drawFilter();
-    addSortListeners();
-}
+//function drawResultView() {
+//    // waitForData(drawResultView);
+//    drawFilter();
+//    addSortListeners();
+//}

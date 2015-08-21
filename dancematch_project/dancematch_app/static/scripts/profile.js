@@ -29,10 +29,6 @@ function drawProfile(data) {
 
     toggle_button = profile.getElementsByClassName("edit_toggle")[0];
     addToggleListener(toggle_button);
-
-    // TODO pull these out?
-    drawPrefItems(DM.user_dances);
-    drawSuburbs(DM.user_suburbs);
 }
 
 
@@ -305,7 +301,7 @@ function onPrefUpdate(e) {
 
 // TODO: run on button click; break into smaller functions
 function newPref() {
-    waitForData(newPref);
+    // waitForData(newPref);
 
     var parent = document.getElementById("new_pref");
     var template = document.getElementsByClassName("template")[0];

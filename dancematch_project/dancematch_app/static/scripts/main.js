@@ -106,8 +106,6 @@ function drawPrefItems(data) {
 
     drawPrefList(pl, template, DM.user_dances);
     addPrefListeners("pref_list");
-    drawResultView();
-
 }
 
 function getAppStatus() {
@@ -120,7 +118,6 @@ function getAppStatus() {
         var json_string = e.currentTarget.responseText;
         var data = JSON.parse(json_string);
 
-        //TODO update DM names of first two
         DM.user_profile = data["user_profile"];
         DM.user_suburbs = data["user_suburbs"];
         DM.user_dances = data["user_dances"];
@@ -136,6 +133,10 @@ function getAppStatus() {
         DM.all_dance_prefs = data["all_dance_prefs"];
 
         drawProfile(data["user_profile"]);
+        drawPrefItems(DM.user_dances);
+        drawSuburbs(DM.user_suburbs);
+        drawFilter();
+        addSortListeners();
     };
     request.send();
 }
