@@ -28,16 +28,33 @@
             <button class="edit_toggle">Edit</button>
         </div>
     </div>
-    <div id="location">
+    <div id="suburbs">
+        <button class="edit_location">Edit Preferred Locations</button>
+        <div id="choose_suburbs" class="show">
+            <ul class="template ul_template">
+                <h2>
+                    City Hub
+                </h2>
+                <li class="template li_template">
+                    <input type="checkbox" id="suburb">
+                    <label for="suburb">
+                        Suburb
+                    </label>
+                </li>
+            </ul>
+        </div>
+
         <p>
             I would travel to:
         </p>
-        <div id="suburbs">
+        <div id="suburb_list">
         </div>
+    </div>
+    <div id="venues">
         <p>
             Venues I attend:
         </p>
-        <div id="venues">
+        <div id="venue_list">
         </div>
     </div>
 
@@ -68,7 +85,7 @@
                 </div>
                 <div>
                     <button class="edit_toggle">Edit</button>
-                    <button class="delete hide">Delete</button>
+                    <button class="delete warning hide">Delete</button>
                 </div>
             </li>
         </ul>

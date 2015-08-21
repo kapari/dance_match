@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 
-from .models import Dancer, Dance, Day, Time, Venue, PreferredVenue, PreferredSuburb, MajorCity, DancePrefs, SkillLevel, Goals, Activity, DanceRole
+from .models import Dancer, Dance, Day, Time, Venue, PreferredVenue, PreferredSuburb, MajorCity, Suburb, DancePrefs, SkillLevel, Goals, Activity, DanceRole
 
 import json
 
@@ -208,7 +208,7 @@ def api_profile(request):
     return HttpResponse(json_data, content_type='application/json')
 
 
-def api_suburbs(request):
+def api_suburb_prefs(request):
     preferred_suburbs = PreferredSuburb.objects.all()
     output = []
     for pref_suburb in preferred_suburbs:
@@ -237,39 +237,173 @@ def api_dance_list(request):
     output = []
     for dance in dances:
         output.append({"name": dance.name, "id": dance.id})
-    return HttpResponse(json.dumps(output), content_type='application/json')
-
+    return HttpResponse(json.dumps(output, indent=4), content_type='application/json')
 
 def api_role_list(request):
     roles = DanceRole.objects.order_by("name")
     output = []
     for role in roles:
         output.append({"name": role.name, "id": role.id})
-    return HttpResponse(json.dumps(output), content_type='application/json')
-
+    return HttpResponse(json.dumps(output, indent=4), content_type='application/json')
 
 def api_activity_list(request):
     activities = Activity.objects.order_by("name")
     output = []
     for activity in activities:
         output.append({"name": activity.name, "id": activity.id})
-    return HttpResponse(json.dumps(output), content_type='application/json')
-
+    return HttpResponse(json.dumps(output, indent=4), content_type='application/json')
 
 def api_skill_level_list(request):
     skill_levels = SkillLevel.objects.all()
     output = []
     for level in skill_levels:
         output.append({"name": level.name, "id": level.id})
-    return HttpResponse(json.dumps(output), content_type='application/json')
-
+    return HttpResponse(json.dumps(output, indent=4), content_type='application/json')
 
 def api_goal_list(request):
     goals = Goals.objects.all()
     output = []
     for goal in goals:
         output.append({"name": goal.name, "id": goal.id})
-    return HttpResponse(json.dumps(output), content_type='application/json')
+    return HttpResponse(json.dumps(output, indent=4), content_type='application/json')
+
+def api_suburbs(request):
+    suburbs = Suburb.objects.all()
+    output = []
+    for suburb in suburbs:
+        output.append({"name": suburb.name, "id": suburb.id, "hub_name": suburb.hub.name})
+    return HttpResponse(json.dumps(output, indent=4), content_type='application/json')
+
+def api_app_status(request):
+    app_status = {}
+    # dropdowns: dances, roles, skill levels, activity, goals, suburbs, cities
+    # profiles/results: dancers, dance prefs, suburb prefs (not user)
+    # user: dancer, dance prefs, suburb prefs
+    # TODO: Other user profiles, venues, preferred venues
+
+    # SIMPLE dropdown models:
+    dances = Dance.objects.order_by("name")
+    roles = DanceRole.objects.order_by("name")
+    activities = Activity.objects.order_by("name")
+    skill_levels = SkillLevel.objects.order_by("id")
+    goals = Goals.objects.order_by("name")
+    cities = MajorCity.objects.order_by("name")
+
+    names = ["dances", "roles", "activities", "skill_levels", "goals", "cities"]
+    all_object_lists = [dances, roles, activities, skill_levels, goals, cities]
+
+    index = 0
+    for object_list in all_object_lists:
+        output = []
+        for object in object_list:
+            output.append({"name": object.name, "id": object.id})
+        print("index: " + str(index))
+        print(names[index])
+
+        app_status[names[index]] = output
+        index += 1
+
+    # Suburb dropdown
+    suburbs = Suburb.objects.order_by("name")
+    suburb_output = []
+    for suburb in suburbs:
+        suburb_output.append({"name": suburb.name,
+                       "id": suburb.id,
+                       "hub_name": suburb.hub.name,
+                       "hub_id": suburb.hub.id
+                       })
+    app_status["suburbs"] = suburb_output
+
+    # User Profile Data
+    user = request.user
+    dancer = user.dancer
+    profile_output = []
+    profile_data = {}
+    profile_data["id"] = user.id
+    profile_data["dancer_id"] = user.dancer.id
+    profile_data["username"] = user.username
+    profile_data["first_name"] = user.first_name
+    profile_data["last_name"] = user.last_name
+    profile_data["bio"] = dancer.bio
+    profile_data["profile_img"] = dancer.img_path
+    profile_output.append(profile_data)
+    app_status["user_profile"] = profile_output
+
+    # User Suburb Prefs
+    suburb_prefs = PreferredSuburb.objects.filter(dancer=dancer)
+    sub_pref_output = []
+    for suburb_pref in suburb_prefs:
+        subdata = {}
+        subdata["id"] = suburb_pref.id
+        subdata["sub_id"] = suburb_pref.suburb.id
+        subdata["sub_name"] = suburb_pref.suburb.name
+        subdata["hub_id"] = suburb_pref.suburb.hub.id
+        subdata["hub_name"] = suburb_pref.suburb.hub.name
+        sub_pref_output.append(subdata)
+    app_status["user_suburbs"] = sub_pref_output
+
+    # User Dance Prefs
+    user_dance_prefs = DancePrefs.objects.filter(dancer=user.dancer)
+    user_pref_output = []
+    for pref in user_dance_prefs:
+        prefdata = {}
+        prefdata["dance_id"] = pref.dance.id
+        prefdata["dance"] = pref.dance.name
+        prefdata["role_id"] = pref.role.id
+        prefdata["role"] = pref.role.name
+        prefdata["skill_level_id"] = pref.skill_level.id
+        prefdata["skill_level"] = pref.skill_level.name
+        prefdata["activity_id"] = pref.activity.id
+        prefdata["activity"] = pref.activity.name
+        prefdata["goal_id"] = pref.goal.id
+        prefdata["goal"] = pref.goal.name
+        prefdata["notes"] = pref.notes
+        user_pref_output.append(prefdata)
+    app_status["user_dances"] = user_pref_output
+
+
+    # All Other Dance Prefs
+    all_dance_prefs = DancePrefs.objects.all()
+    pref_output = []
+    for pref in all_dance_prefs:
+        if pref.dancer.user != user:
+            prefdata = {}
+            prefdata["id"] = pref.id
+            prefdata["user_id"] = pref.dancer.user.id
+            prefdata["user"] = pref.dancer.user.username
+            prefdata["first_name"] = pref.dancer.user.first_name
+            prefdata["last_name"] = pref.dancer.user.last_name
+            prefdata["dance_id"] = pref.dance.id
+            prefdata["dance"] = pref.dance.name
+            prefdata["role_id"] = pref.role.id
+            prefdata["role"] = pref.role.name
+            prefdata["skill_level_id"] = pref.skill_level.id
+            prefdata["skill_level"] = pref.skill_level.name
+            prefdata["activity_id"] = pref.activity.id
+            prefdata["activity"] = pref.activity.name
+            prefdata["goal_id"] = pref.goal.id
+            prefdata["goal"] = pref.goal.name
+            prefdata["notes"] = pref.notes
+            prefdata["img_path"] = pref.dancer.img_path
+            prefdata["suburbs"] = []
+
+            dancer = get_object_or_404(Dancer, pk=pref.dancer.id)
+            user_suburbs = PreferredSuburb.objects.filter(dancer=dancer)
+            for pref_suburb in user_suburbs:
+                subdata = {}
+                subdata["id"] = pref_suburb.id
+                subdata["sub_id"] = pref_suburb.suburb.id
+                subdata["sub_name"] = pref_suburb.suburb.name
+                subdata["hub_id"] = pref_suburb.suburb.hub.id
+                subdata["hub"] = pref_suburb.suburb.hub.name
+                prefdata["suburbs"].append(subdata)
+
+            pref_output.append(prefdata)
+    app_status["all_dance_prefs"] = pref_output
+
+    json_data = json.dumps(app_status, indent=4)
+    return HttpResponse(json_data, content_type='application/json')
+
 
 @login_required(login_url='/login/')
 def profile_ajax(request):
@@ -296,6 +430,14 @@ def update_profile(request):
         dancer.save()
 
         return HttpResponseRedirect("/profile_ajax/")
+
+# TODO finish
+@csrf_exempt
+def update_suburbs(request):
+    if request.POST:
+        print(request.POST)
+        user_id = int(request.POST.get("user_id"))
+        user = get_object_or_404(User, id=user_id)
 
 @csrf_exempt
 def update_pref(request):

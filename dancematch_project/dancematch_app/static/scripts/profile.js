@@ -30,44 +30,70 @@ function drawProfile(data) {
     toggle_button = profile.getElementsByClassName("edit_toggle")[0];
     addToggleListener(toggle_button);
 
-    // TODO pull these out; have them wait independently
-    // Wait until have user_id before drawing others
-    ApiCall("/api_dance_prefs/", drawPrefItems, "pref_data");
-    ApiCall("/api_suburbs/", drawSuburbs, "suburb_data");
+    // TODO pull these out?
+    drawPrefItems(DM.user_dances);
+    drawSuburbs(DM.user_suburbs);
 }
 
 
 // ===== DRAW USER LOCATION INFO ======================
 
-function drawSuburbs(data, user_id) {
+// TODO finish
+function drawSuburbChooser() {
     var suburb_div = document.getElementById("suburbs");
+    var suburb_list = DM.suburb_list;
+    for (var i = 0; i < suburb_list.length; i++) {
+        // check if ul for hub
+        if (suburb_list[i].hub_id) {
+
+        }
+
+        var label = document.createElement("label");
+        label.setAttribute("for", suburb_list[i].id);
+        var checkbox = document.createElement("checkbox");
+        checkbox.setAttribute("name", suburb_list[i].id);
+        suburb_div.appendChild(label);
+        suburb_div.appendChild(checkbox);
+    }
+}
+
+function drawSuburbs(data) {
+    var suburb_div = document.getElementById("suburb_list");
     var hubs = suburb_div.getElementsByTagName("ul");
     // dict[1] = ul with data-id 1
+    var hub_ids = getHubIDs(hubs);
+    console.log("hub_ids: " + hub_ids);
+    console.log("drawSuburb data: " + data);
+
+    for (var i = 0; i < data.length; i++) {
+        var pref_suburb = data[i];
+        // check if ul for each city hub
+        var current_hub_id = pref_suburb["hub_id"];
+        if (!(current_hub_id in hub_ids)) {
+            var hub_ul = document.createElement("ul");
+            hub_ul.setAttribute("data-id", current_hub_id);
+            hub_ul.innerHTML = pref_suburb["hub_name"] + " Area";
+            hub_ids[current_hub_id] = hub_ul;
+            suburb_div.appendChild(hub_ul);
+        }
+        // populate ul with corresponding suburb li
+        var suburb = document.createElement("li");
+        suburb.setAttribute('data-id', pref_suburb["id"]);
+        suburb.innerHTML = pref_suburb["sub_name"];
+        var current_hub = hub_ids[current_hub_id];
+        current_hub.appendChild(suburb);
+    }
+    drawSuburbChooser();
+    // addSuburbListener();
+}
+
+function getHubIDs(hubs) {
     var hub_ids = {};
-    for (i = 0; i < hubs.length; i++) {
+    for (var i = 0; i < hubs.length; i++) {
         var hub_id = hubs[i].getAttribute("data-id");
         hub_ids[hub_id] = hubs[i];
     }
-    for (i = 0; i < data.length; i++) {
-        var pref_suburb = data[i];
-        if (pref_suburb["user_id"] == DM.user_id) {
-            // check if ul for each city hub
-            var current_hub_id = pref_suburb["hub_id"];
-            if (!(current_hub_id in hub_ids)) {
-                var hub_ul = document.createElement("ul");
-                hub_ul.setAttribute("data-id", current_hub_id);
-                hub_ul.innerHTML = pref_suburb["hub_name"] + " Area";
-                hub_ids[current_hub_id] = hub_ul;
-                suburb_div.appendChild(hub_ul);
-            }
-            // populate ul with corresponding suburb li
-            var suburb = document.createElement("li");
-            suburb.setAttribute('data-id', pref_suburb["id"]);
-            suburb.innerHTML = pref_suburb["sub_name"];
-            var current_hub = hub_ids[current_hub_id];
-            current_hub.appendChild(suburb);
-        }
-    }
+    return hub_ids
 }
 
 
@@ -91,6 +117,14 @@ function addProfileListeners() {
     }
 }
 
+// TODO fix event listener
+function addSuburbListener() {
+    var location_div = document.getElementById("location");
+    var show_button = location_div.getElementsByClassName("edit_location")[0];
+    show_button.addEventListener("click", function(e) {
+        location_div.getElementById("choose_suburbs").classList.toggle("hide");
+    });
+}
 
 // ===== DRAW USER DANCE PREFS ========================
 
@@ -120,41 +154,44 @@ function drawPrefEdit(parent, current_pref) {
     var models = DM.model_list;
     var model_lists = DM.model_list_list;
     for (var i = 0; i < models.length; i++) {
+        // console.log("DM[models[i]: " + DM[models[i]]);
+        //drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
+        //        window.models[model_lists[i]], "name", "id", current_pref[models[i]]);
         drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
-                window.models[model_lists[i]], "name", "id", current_pref[models[i]]);
+            DM[model_lists[i]], "name", "id", current_pref[models[i]]);
+
     }
     parent.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 }
 
-function drawPrefList(parent, template, data, user_id) {
-    var sorted_data = data.sort(sortResults("dance"));
+function drawPrefList(parent, template, data) {
+    var sorted_data = DM.user_dances.sort(sortResults("dance"));
 
     for (var i = 0; i < sorted_data.length; i++) {
         var current_pref = sorted_data[i];
 
         // Draw pref only if user id matches current user
-        if (!user_id || current_pref.user_id == user_id) {
-            // console.log("user_id " + user_id);
-            var clone = template.cloneNode(true);
-            clone.classList.remove("template");
-            clone.setAttribute("data-id", current_pref.id);
+        // console.log("user_id " + user_id);
+        var clone = template.cloneNode(true);
+        clone.classList.remove("template");
+        clone.setAttribute("data-id", current_pref.id);
 
-            // Read-only div
-            drawPrefRead(clone, current_pref);
+        // Read-only div
+        drawPrefRead(clone, current_pref);
 
-            // Edit div
-            var edit_div = clone.getElementsByClassName("edit")[0];
-            edit_div.classList.add("hide");
-            drawPrefEdit(clone, current_pref);
+        // Edit div
+        var edit_div = clone.getElementsByClassName("edit")[0];
+        edit_div.classList.add("hide");
+        drawPrefEdit(clone, current_pref);
 
-            var toggle_button = clone.getElementsByClassName("edit_toggle")[0];
-            addToggleListener(toggle_button);
+        var toggle_button = clone.getElementsByClassName("edit_toggle")[0];
+        addToggleListener(toggle_button);
 
-            var delete_button = clone.getElementsByClassName("delete")[0];
-            addDeletePrefListener(delete_button);
+        var delete_button = clone.getElementsByClassName("delete")[0];
+        addDeletePrefListener(delete_button);
 
-            parent.appendChild(clone);
-        }
+        parent.appendChild(clone);
+
     }
 }
 
@@ -201,7 +238,7 @@ function toggleReadEdit(button) {
 }
 
 function updateReadOnly(value, model) {
-    var option_list = window.models[model];
+    var option_list = DM[model];
     var option_count = option_list.length;
     var text = "NOPE";
     for (var i = 0; i < option_count; i++) {
@@ -322,7 +359,6 @@ function viewListener() {
 
 // ===== DELETE PREF ==================================
 
-// TODO delete pref
 function onPrefDelete(e) {
     var group_div = e.target.parentElement;
     var pref_id_div = group_div.parentElement;

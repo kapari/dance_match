@@ -37,7 +37,8 @@ urlpatterns = [
     url(r'^api_activity_list/', views.api_activity_list, name='api_activity_list'),
     url(r'^api_goal_list/', views.api_goal_list, name='api_goal_list'),
     url(r'^api_profile/', views.api_profile, name='api_profile'),
-    url(r'^api_suburbs/', views.api_suburbs, name='api_suburbs'),
+    url(r'^api_suburb_prefs/', views.api_suburb_prefs, name='api_suburb_prefs'),
+    url(r'^api_app_status/', views.api_app_status, name="api_app_status"),
 
     # ex. /profile_ajax/
     url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),

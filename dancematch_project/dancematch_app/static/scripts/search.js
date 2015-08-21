@@ -181,7 +181,9 @@ function drawFilter() {
     var default_selection = 1;
     for (var i = 0; i < filter_lists.length; i++) {
         var current_select = parent.getElementsByClassName(filter_lists[i])[0];
-        drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
+        // drawDropdown(current_select, window.models[filter_lists[i]], "name", "id", default_selection);
+        drawDropdown(current_select, DM[filter_lists[i]], "name", "id", default_selection);
+
         addFilterListener(current_select);
     }
 }
@@ -189,7 +191,7 @@ function drawFilter() {
 function checkFilter() {
     var parent = document.getElementById("search_fields");
     var filter_lists = ["dance_list", "role_list", "goal_list"];
-    var data = DM.pref_data;
+    var data = DM.all_dance_prefs;
     var property_list = [];
     var value_list = [];
     for (var i = 0; i < filter_lists.length; i++) {
