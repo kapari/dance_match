@@ -26,7 +26,7 @@ function drawProfile() {
 
     addProfileListeners();
 
-    toggle_button = profile.getElementsByClassName("edit_toggle")[0];
+    var toggle_button = profile.getElementsByClassName("edit_toggle")[0];
     addToggleListener(toggle_button);
 }
 
@@ -35,7 +35,7 @@ function drawProfile() {
 
 // TODO finish
 function drawSuburbChooser() {
-    var suburb_div = document.getElementById("suburbs");
+    var suburb_div = document.getElementById("choose_suburbs");
     var suburb_list = DM.suburb_list;
     for (var i = 0; i < suburb_list.length; i++) {
         // check if ul for hub
@@ -53,35 +53,45 @@ function drawSuburbChooser() {
 }
 
 function drawUserSuburbs() {
-    var data = DM.user_suburbs;
+    var data = DM.suburb_list;
     var suburb_div = document.getElementById("suburb_list");
     var hubs = suburb_div.getElementsByTagName("ul");
     // dict[1] = ul with data-id 1
     var hub_ids = getHubIDs(hubs);
-    console.log("hub_ids: " + hub_ids);
-    console.log("drawSuburb data: " + data);
+    //console.log("hub_ids: " + hub_ids);
+    //console.log("drawSuburb data: " + data);
 
     for (var i = 0; i < data.length; i++) {
-        var pref_suburb = data[i];
+        var current_suburb = data[i];
         // check if ul for each city hub
-        var current_hub_id = pref_suburb["hub_id"];
+        var current_hub_id = current_suburb["hub_id"];
         if (!(current_hub_id in hub_ids)) {
             var hub_ul = document.createElement("ul");
             hub_ul.setAttribute("data-id", current_hub_id);
-            hub_ul.innerHTML = pref_suburb["hub_name"] + " Area";
+            hub_ul.innerHTML = current_suburb["hub_name"] + " Area";
             hub_ids[current_hub_id] = hub_ul;
             suburb_div.appendChild(hub_ul);
         }
         // populate ul with corresponding suburb li
         var suburb = document.createElement("li");
-        suburb.setAttribute('data-id', pref_suburb["id"]);
-        suburb.innerHTML = pref_suburb["sub_name"];
+        suburb.setAttribute('data-id', current_suburb["id"]);
+
+        // Create labels and checkboxes
+        var label = document.createElement("label");
+        label.setAttribute("for", current_suburb.id);
+        var checkbox = document.createElement("checkbox");
+        checkbox.setAttribute("name", current_suburb.id);
+
+        suburb.innerHTML = current_suburb["sub_name"];
         var current_hub = hub_ids[current_hub_id];
         current_hub.appendChild(suburb);
     }
-    drawSuburbChooser();
+    // drawSubLists(suburb_div, data);
+    // drawSuburbChooser();
     // addSuburbListener();
 }
+
+
 
 function getHubIDs(hubs) {
     var hub_ids = {};
@@ -91,6 +101,33 @@ function getHubIDs(hubs) {
     }
     return hub_ids
 }
+
+//function drawSubLists(parent_div, data) {
+//    var hubs = parent_div.getElementsByTagName("ul");
+//    // dict[1] = ul with data-id 1
+//    var hub_ids = getHubIDs(hubs);
+//    //console.log("hub_ids: " + hub_ids);
+//    //console.log("drawSuburb data: " + data);
+//
+//    for (var i = 0; i < data.length; i++) {
+//        var pref_suburb = data[i];
+//        // check if ul for each city hub
+//        var current_hub_id = pref_suburb["hub_id"];
+//        if (!(current_hub_id in hub_ids)) {
+//            var hub_ul = document.createElement("ul");
+//            hub_ul.setAttribute("data-id", current_hub_id);
+//            hub_ul.innerHTML = pref_suburb["hub_name"] + " Area";
+//            hub_ids[current_hub_id] = hub_ul;
+//            parent_div.appendChild(hub_ul);
+//        }
+//        // populate ul with corresponding suburb li
+//        var suburb = document.createElement("li");
+//        suburb.setAttribute('data-id', pref_suburb["id"]);
+//        suburb.innerHTML = pref_suburb["sub_name"];
+//        var current_hub = hub_ids[current_hub_id];
+//        current_hub.appendChild(suburb);
+//    }
+//}
 
 
 // ===== ADD LISTENERS ================================
@@ -125,12 +162,12 @@ function addSuburbListener() {
 // ===== DRAW USER DANCE PREFS ========================
 
 // (also used on search page)
-function drawDropdown(select, data, name_field, id_field, selected) {
+function drawDropdown(select, data, selected) {
     for (var i = 0; i < data.length; i++) {
         var option = document.createElement('option');
-        option.innerHTML = data[i][name_field];
-        option.setAttribute("value", data[i][id_field]);
-        if (data[i][name_field] == selected) {
+        option.innerHTML = data[i]["name"];
+        option.setAttribute("value", data[i]["id"]);
+        if (data[i]["name"] == selected) {
             option.setAttribute("selected", "selected");
         }
         select.appendChild(option);
@@ -150,9 +187,9 @@ function drawPrefEdit(parent, current_pref) {
     var models = DM.model_list;
     var model_lists = DM.model_list_list;
     for (var i = 0; i < models.length; i++) {
-        drawDropdown(parent.getElementsByClassName(model_lists[i])[0],
-            DM[model_lists[i]], "name", "id", current_pref[models[i]]);
-
+        var current_select = parent.getElementsByClassName(model_lists[i])[0];
+        var model_data = DM[model_lists[i]];
+        drawDropdown(current_select, model_data, current_pref[models[i]]);
     }
     parent.getElementsByClassName("notes_textarea")[0].innerHTML = current_pref.notes;
 }

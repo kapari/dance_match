@@ -276,6 +276,8 @@ def api_suburbs(request):
 
 def api_app_status(request):
     app_status = {}
+    user = request.user
+    dancer = user.dancer
     # dropdowns: dances, roles, skill levels, activity, goals, suburbs, cities
     # profiles/results: dancers, dance prefs, suburb prefs (not user)
     # user: dancer, dance prefs, suburb prefs
@@ -305,18 +307,22 @@ def api_app_status(request):
 
     # Suburb dropdown
     suburbs = Suburb.objects.order_by("name")
+    user_suburb_prefs = PreferredSuburb.objects.filter(dancer=dancer)
     suburb_output = []
     for suburb in suburbs:
-        suburb_output.append({"name": suburb.name,
-                       "id": suburb.id,
-                       "hub_name": suburb.hub.name,
-                       "hub_id": suburb.hub.id
-                       })
+        selected = False
+        for pref in user_suburb_prefs:
+            if suburb.id == pref.suburb.id:
+                selected = True
+        suburb_output.append({"sub_name": suburb.name,
+                   "sub_id": suburb.id,
+                   "hub_name": suburb.hub.name,
+                   "hub_id": suburb.hub.id,
+                   "selected": selected
+                   })
     app_status["suburbs"] = suburb_output
 
     # User Profile Data
-    user = request.user
-    dancer = user.dancer
     profile_output = []
     profile_data = {}
     profile_data["id"] = user.id
@@ -329,7 +335,7 @@ def api_app_status(request):
     profile_output.append(profile_data)
     app_status["user_profile"] = profile_output
 
-    # User Suburb Prefs
+    # User Suburb Prefs NO LONGER NEEDED?
     suburb_prefs = PreferredSuburb.objects.filter(dancer=dancer)
     sub_pref_output = []
     for suburb_pref in suburb_prefs:
