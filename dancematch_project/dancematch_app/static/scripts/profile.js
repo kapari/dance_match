@@ -88,6 +88,9 @@ function drawUserSuburbs() {
         // Check box if user selected
         if (current_suburb.selected) {
             checkbox.setAttribute("checked", "true");
+            suburb.classList.add("checked");
+        } else {
+            suburb.classList.add("hide");
         }
 
         suburb.appendChild(checkbox);
@@ -99,11 +102,28 @@ function drawUserSuburbs() {
     }
     // drawSubLists(suburb_div, data);
     // drawSuburbChooser();
-    // addSuburbListener();
+    addSuburbToggleListener();
 }
 
-function showEditSuburbs() {
+function toggleEditSuburbs() {
+    var location_div = document.getElementById("suburbs");
+    var toggle_button = location_div.getElementsByClassName("suburb_toggle")[0];
+    toggle_button.classList.toggle("edit_view");
+    if (toggle_button.classList.contains("edit_view")) {
+        toggle_button.innerText = "Save Locations";
+    } else {
+        toggle_button.innerText = "Edit Locations";
+    }
 
+    var sub_list = document.getElementById("suburb_list");
+    sub_list.classList.toggle("read");
+
+    var all_suburbs = sub_list.getElementsByTagName("li");
+    for (var i = 0; i < all_suburbs.length; i++) {
+        if (!(all_suburbs[i].classList.contains("checked"))) {
+            all_suburbs[i].classList.toggle("hide");
+        }
+    }
 }
 
 function getHubIDs(hubs) {
@@ -163,14 +183,14 @@ function addProfileListeners() {
     }
 }
 
-// TODO fix event listener
-function addSuburbListener() {
-    var location_div = document.getElementById("location");
-    var show_button = location_div.getElementsByClassName("edit_location")[0];
-    show_button.addEventListener("click", function(e) {
-        location_div.getElementById("choose_suburbs").classList.toggle("hide");
-    });
+function addSuburbToggleListener() {
+    var location_div = document.getElementById("suburbs");
+    var toggle_button = location_div.getElementsByClassName("suburb_toggle")[0];
+    toggle_button.addEventListener("click", toggleEditSuburbs);
 }
+
+//TODO add listeners on suburb lis
+
 
 // ===== DRAW USER DANCE PREFS ========================
 

@@ -131,6 +131,10 @@ select {
     /*-webkit-appearance: none;*/
 }
 
+.read input {
+    display: none;
+}
+
 .upload {
     border: 1px solid #e88d67;
     padding: 0.5em;
