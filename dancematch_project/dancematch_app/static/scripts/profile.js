@@ -63,6 +63,7 @@ function drawUserSuburbs() {
 
     for (var i = 0; i < data.length; i++) {
         var current_suburb = data[i];
+
         // check if ul for each city hub
         var current_hub_id = current_suburb["hub_id"];
         if (!(current_hub_id in hub_ids)) {
@@ -72,6 +73,7 @@ function drawUserSuburbs() {
             hub_ids[current_hub_id] = hub_ul;
             suburb_div.appendChild(hub_ul);
         }
+
         // populate ul with corresponding suburb li
         var suburb = document.createElement("li");
         suburb.setAttribute('data-id', current_suburb["id"]);
@@ -79,10 +81,19 @@ function drawUserSuburbs() {
         // Create labels and checkboxes
         var label = document.createElement("label");
         label.setAttribute("for", current_suburb.id);
-        var checkbox = document.createElement("checkbox");
+        var checkbox = document.createElement("input");
+        checkbox.setAttribute("type", "checkbox");
         checkbox.setAttribute("name", current_suburb.id);
 
-        suburb.innerHTML = current_suburb["sub_name"];
+        // Check box if user selected
+        if (current_suburb.selected) {
+            checkbox.setAttribute("checked", "true");
+        }
+
+        suburb.appendChild(checkbox);
+        suburb.appendChild(label);
+        suburb.innerHTML += current_suburb["sub_name"];
+
         var current_hub = hub_ids[current_hub_id];
         current_hub.appendChild(suburb);
     }
@@ -91,7 +102,9 @@ function drawUserSuburbs() {
     // addSuburbListener();
 }
 
+function showEditSuburbs() {
 
+}
 
 function getHubIDs(hubs) {
     var hub_ids = {};
