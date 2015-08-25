@@ -11,7 +11,7 @@ var DM = {
     model_list_list: ["dance_list", "role_list", "skill_level_list", "activity_list", "goal_list"],
 };
 
-document.write("test for user ID: " + DM.user_id);
+// document.write("test for user ID: " + DM.user_id);
 
 
 // ===== AJAX POST ====================================

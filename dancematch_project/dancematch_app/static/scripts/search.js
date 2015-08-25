@@ -101,6 +101,10 @@ function drawResultData(current_pref, clone) {
     clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
     clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
     clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
+    var email = clone.getElementsByClassName("email")[0];
+    var link = email.getElementsByTagName("a")[0];
+    link.setAttribute("href", "mailto:" + current_pref.email);
+    link.innerHTML = "Email";
 }
 
 function drawResultLocation(current_pref, clone) {
@@ -121,34 +125,40 @@ function drawResultLocation(current_pref, clone) {
 }
 
 function drawResultList(data) {
-
     var table = document.getElementsByTagName("table")[0];
-    table.classList.remove("hide");
-
     var placeholder = document.getElementById("placeholder");
-    placeholder.classList.add("hide");
 
-    var results_table = document.getElementById("pref_results");
-    var template = results_table.getElementsByClassName("template")[0];
-    // empty list first and reattach template
-    while (results_table.firstChild) {
-        results_table.removeChild(results_table.firstChild);
-    }
-    results_table.appendChild(template);
+    if (data.length > 0) {
+        table.classList.remove("hide");
+        placeholder.classList.add("hide");
 
-    for (var i = 0; i < data.length; i++) {
-        var clone = template.cloneNode(true);
-        var current_pref = data[i];
-
-        if (current_pref.user_id != DM.user_id) {
-            drawResultData(current_pref, clone);
-
-            // TODO show only suburbs that match current user's prefs
-            drawResultLocation(current_pref, clone);
-
-            results_table.appendChild(clone);
+        var results_table = document.getElementById("pref_results");
+        var template = results_table.getElementsByClassName("template")[0];
+        // empty list first and reattach template
+        while (results_table.firstChild) {
+            results_table.removeChild(results_table.firstChild);
         }
+        results_table.appendChild(template);
+
+        for (var i = 0; i < data.length; i++) {
+            var clone = template.cloneNode(true);
+            var current_pref = data[i];
+
+            if (current_pref.user_id != DM.user_id) {
+                drawResultData(current_pref, clone);
+
+                // TODO show only suburbs that match current user's prefs
+                drawResultLocation(current_pref, clone);
+
+                results_table.appendChild(clone);
+            }
+        }
+    } else {
+        table.classList.add("hide");
+        placeholder.classList.remove("hide");
+        placeholder.innerHTML = "Sorry, no matches found. Please try again."
     }
+
 }
 
 
