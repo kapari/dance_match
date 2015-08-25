@@ -95,9 +95,9 @@ function drawResultData(current_pref, clone) {
     clone.setAttribute("data-id", current_pref.id);
     clone.getElementsByClassName("thumb")[0].setAttribute('src', current_pref.img_path);
     clone.getElementsByClassName("dancer")[0].innerHTML = current_pref.first_name;
-    clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
-    clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
-    clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
+    //clone.getElementsByClassName("dance")[0].innerHTML = current_pref.dance;
+    //clone.getElementsByClassName("dance")[0].setAttribute('data-id', current_pref.dance_id);
+    //clone.getElementsByClassName("role")[0].innerHTML = current_pref.role;
     clone.getElementsByClassName("skill_level")[0].innerHTML = current_pref.skill_level;
     clone.getElementsByClassName("goal")[0].innerHTML = current_pref.goal;
     clone.getElementsByClassName("notes")[0].innerHTML = current_pref.notes;
