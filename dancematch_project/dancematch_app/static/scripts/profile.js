@@ -12,8 +12,8 @@ function drawProfile() {
     header.innerHTML = profile_data["first_name"] + " " + profile_data["last_name"];
 
     profile.getElementsByClassName("username")[0].innerText = profile_data["username"];
-    profile.getElementsByClassName("first_name")[0].innerText = profile_data["first_name"];
-    profile.getElementsByClassName("last_name")[0].innerText = profile_data["last_name"];
+    //profile.getElementsByClassName("first_name")[0].innerText = profile_data["first_name"];
+    //profile.getElementsByClassName("last_name")[0].innerText = profile_data["last_name"];
     profile.getElementsByClassName("bio")[0].innerText = profile_data["bio"];
     profile.getElementsByClassName("profile_img")[0].setAttribute('src', profile_data["profile_img"]);
 
@@ -33,25 +33,7 @@ function drawProfile() {
 
 // ===== DRAW USER LOCATION INFO ======================
 
-// TODO finish
-function drawSuburbChooser() {
-    var suburb_div = document.getElementById("choose_suburbs");
-    var suburb_list = DM.suburb_list;
-    for (var i = 0; i < suburb_list.length; i++) {
-        // check if ul for hub
-        if (suburb_list[i].hub_id) {
-
-        }
-
-        var label = document.createElement("label");
-        label.setAttribute("for", suburb_list[i].id);
-        var checkbox = document.createElement("checkbox");
-        checkbox.setAttribute("name", suburb_list[i].id);
-        suburb_div.appendChild(label);
-        suburb_div.appendChild(checkbox);
-    }
-}
-
+// TODO refactor
 function drawUserSuburbs() {
     var data = DM.suburb_list;
     var suburb_div = document.getElementById("suburb_list");
@@ -96,13 +78,10 @@ function drawUserSuburbs() {
 
         suburb.appendChild(checkbox);
         suburb.appendChild(label);
-        // suburb.innerHTML += current_suburb["sub_name"];
 
         var current_hub = hub_ids[current_hub_id];
         current_hub.appendChild(suburb);
     }
-    // drawSubLists(suburb_div, data);
-    // drawSuburbChooser();
     addSuburbToggleListener();
     addSuburbUpdateListeners(suburb_div);
 }
@@ -115,33 +94,6 @@ function getHubIDs(hubs) {
     }
     return hub_ids
 }
-
-//function drawSubLists(parent_div, data) {
-//    var hubs = parent_div.getElementsByTagName("ul");
-//    // dict[1] = ul with data-id 1
-//    var hub_ids = getHubIDs(hubs);
-//    //console.log("hub_ids: " + hub_ids);
-//    //console.log("drawSuburb data: " + data);
-//
-//    for (var i = 0; i < data.length; i++) {
-//        var pref_suburb = data[i];
-//        // check if ul for each city hub
-//        var current_hub_id = pref_suburb["hub_id"];
-//        if (!(current_hub_id in hub_ids)) {
-//            var hub_ul = document.createElement("ul");
-//            hub_ul.setAttribute("data-id", current_hub_id);
-//            hub_ul.innerHTML = pref_suburb["hub_name"] + " Area";
-//            hub_ids[current_hub_id] = hub_ul;
-//            parent_div.appendChild(hub_ul);
-//        }
-//        // populate ul with corresponding suburb li
-//        var suburb = document.createElement("li");
-//        suburb.setAttribute('data-id', pref_suburb["id"]);
-//        suburb.innerHTML = pref_suburb["sub_name"];
-//        var current_hub = hub_ids[current_hub_id];
-//        current_hub.appendChild(suburb);
-//    }
-//}
 
 
 // ===== ADD LISTENERS ================================
@@ -168,6 +120,9 @@ function toggleEditSuburbs() {
     var location_div = document.getElementById("suburbs");
     var toggle_button = location_div.getElementsByClassName("suburb_toggle")[0];
     toggle_button.classList.toggle("edit_view");
+    toggle_button.classList.toggle("save");
+
+
     if (toggle_button.classList.contains("edit_view")) {
         toggle_button.innerText = "Save Locations";
     } else {
@@ -209,7 +164,6 @@ function onSuburbUpdate(e) {
     sendPost(update, "/update_suburb/");
 }
 
-//TODO add listeners on suburb lis
 function addSuburbUpdateListeners(parent) {
     var suburb_checkboxes = parent.getElementsByTagName("input");
     for (var i = 0; i < suburb_checkboxes.length; i++) {
@@ -255,6 +209,7 @@ function drawPrefEdit(parent, current_pref) {
 
 function drawUserPrefs() {
     var pl = document.getElementById("pref_list");
+    var ul = pl.getElementsByTagName("ul")[0];
     var template = pl.getElementsByClassName("template")[0];
     var sorted_data = DM.user_dances.sort(sortResults("dance"));
 
@@ -278,7 +233,7 @@ function drawUserPrefs() {
         var delete_button = clone.getElementsByClassName("delete")[0];
         addDeletePrefListener(delete_button);
 
-        pl.appendChild(clone);
+        ul.appendChild(clone);
     }
     addPrefListeners("pref_list");
 }
@@ -318,6 +273,8 @@ function toggleReadEdit(button) {
     }
 
     button.classList.toggle("show_edit");
+    button.classList.toggle("save");
+
     if (button.classList.contains("show_edit")) {
         button.innerText = "Save";
     } else {

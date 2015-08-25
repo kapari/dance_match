@@ -6,15 +6,15 @@
 <!-- PROFILE VIEW =========================== -->
 
 <section id="profile_content" class="view">
-    <h1 id="dancer_name"></h1>
 
     <div id="profile">
         <div class="read">
             <img src="" class="profile_img">
-            <span class="username">Username</span>
-            <span class="first_name">First Name</span>
-            <span class="last_name">Last Name</span>
-            <span class="bio">Bio goes here</span>
+            <h1 id="dancer_name"></h1>
+            <p class="username"></p>
+            <!--<p class="first_name"></p>-->
+            <!--<p class="last_name"></p>-->
+            <p class="bio"></p>
         </div>
         <div class="edit">
             <p>
@@ -30,19 +30,19 @@
     </div>
     <div id="suburbs">
         <h2>
-            Where I would travel
+            Where I Would Travel
         </h2>
         <button class="suburb_toggle">Edit Preferred Locations</button>
         <div id="suburb_list" class="read">
         </div>
     </div>
-    <div id="venues">
-        <h2>
-            Venues I attend
-        </h2>
-        <div id="venue_list">
-        </div>
-    </div>
+    <!--<div id="venues">-->
+        <!--<h2>-->
+            <!--Venues I attend-->
+        <!--</h2>-->
+        <!--<div id="venue_list">-->
+        <!--</div>-->
+    <!--</div>-->
 
     <h2>My Dances</h2>
 
@@ -62,12 +62,38 @@
                     <span class="notes">Notes here.</span>
                 </div>
                 <div class="edit">
-                    <select class="edit_field dance_list">Dance Style</select>
-                    <select class="edit_field role_list">Role</select>
-                    <select class="edit_field skill_level_list">Skill Level</select>
-                    <select class="edit_field activity_list">Activity Level</select>
-                    <select class="edit_field goal_list">Goal</select>
-                    <textarea class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>
+                    <!--<label for="dance_list">Dance Style: </label>-->
+                    <!--<select id="dance_list" class="edit_field dance_list"></select>-->
+                    <!--<label for="role_list">Role: </label>-->
+                    <!--<select id="role_list" class="edit_field role_list"></select>-->
+                    <!--<label for="skill_level_list">Skill Level: </label>-->
+                    <!--<select id="skill_level_list" class="edit_field skill_level_list"></select>-->
+                    <!--<label for="activity_list">Working on: </label>-->
+                    <!--<select id="activity_list" class="edit_field activity_list"></select>-->
+                    <!--<label for="goal_list">Goal Type: </label>-->
+                    <!--<select id="goal_list" class="edit_field goal_list">]</select>-->
+                    <!--<label for="notes_textarea">Specific Goals: </label>-->
+                    <!--<textarea id="notes_textarea" class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>-->
+
+                    <label for="dance_list">Dance Style:
+                        <select id="dance_list" class="edit_field dance_list"></select>
+                    </label>
+                    <label for="role_list">Role:
+                        <select id="role_list" class="edit_field role_list"></select>
+                    </label>
+                    <label for="skill_level_list">Skill Level:
+                       <select id="skill_level_list" class="edit_field skill_level_list"></select>
+                    </label>
+                    <label for="activity_list">Working on:
+                        <select id="activity_list" class="edit_field activity_list"></select>
+                    </label>
+                    <label for="goal_list">Goal Type:
+                        <select id="goal_list" class="edit_field goal_list">]</select>
+                    </label>
+                    <label for="notes_textarea">Specific Goals:
+                        <textarea id="notes_textarea" class="edit_field notes_textarea" rows="4" cols="50" placeholder="Describe what you're working on.">Notes here.</textarea>
+                    </label>
+
                 </div>
                 <div>
                     <button class="edit_toggle">Edit</button>

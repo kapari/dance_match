@@ -48,9 +48,10 @@ main {
     left: 0;
     right: 0;
     height: 100%;
+    min-width: 400px;
     margin-top: 4em; /* size of header */
-    margin-left: 100px; /* size of LC */
-    margin-right: 100px; /* size of RC */
+    margin-left: 50px; /* size of LC */
+    margin-right: 50px; /* size of RC */
     margin-bottom: 0em; /* size of footer */
 }
 
@@ -131,8 +132,13 @@ select {
     /*-webkit-appearance: none;*/
 }
 
+.edit label {
+    display: block;
+}
+
 .read input {
     display: none;
+    height: 0;
 }
 
 .upload {
@@ -141,11 +147,12 @@ select {
 }
 
 img.profile_img {
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 50px;
+    max-height: 50px;
     padding: 4px;
     background-color: #fcfcfc;
     border: 1px solid #e88d67;
+    display: block;
 }
 
 .thumb {
@@ -160,9 +167,22 @@ button, .button {
     background-color: #fff6f4;
 }
 
+.pref button {
+    display: inline-block;
+    margin: 0.5em 0.5em 0.5em 0;
+}
+
+.save {
+    background-color: darkseagreen;
+    font-weight: bold;
+    border: 1px solid darkseagreen;
+    color: white;
+}
+
 .warning {
     background-color: #ba444e;
     color: #fff6f4;
+    border: 1px solid #ba444e;
 }
 
 footer {
@@ -176,7 +196,7 @@ footer {
     display: none;
 }
 
-.hide {
+.hide, button.hide {
     display: none;
 }
 
