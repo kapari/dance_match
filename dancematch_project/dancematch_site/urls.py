@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^api_app_status/', views.api_app_status, name="api_app_status"),
 
     # ex. /profile_ajax/
-    url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),
+    url(r'^main/$', views.profile_ajax, name='profile_ajax'),
     url(r'^update_pref/$', views.update_pref, name='update_pref'),
     url(r'^update_profile/$', views.update_profile, name='update_profile'),
     url(r'^update_suburb/$', views.update_suburb, name='update_suburb'),
