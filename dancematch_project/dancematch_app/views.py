@@ -501,6 +501,30 @@ def update_pref(request):
 
         return HttpResponseRedirect("/profile_ajax/")
 
+@csrf_exempt
+def update_suburb(request):
+    if request.POST:
+        user_id = int(request.POST.get("user_id"))
+        user = get_object_or_404(User, id=user_id)
+        dancer = user.dancer
+        suburb_id = int(request.POST.get("sub_id"))
+        suburb = Suburb.objects.filter(id=suburb_id)[0]
+        filtered_pref_list = PreferredSuburb.objects.filter(dancer=dancer)
+        chosen_pref = None
+
+        for pref in filtered_pref_list:
+            if pref.suburb.id == suburb_id:
+                chosen_pref = pref
+                break
+
+        if request.POST["action"] == "DELETE":
+            chosen_pref.delete()
+        else:
+            chosen_pref = PreferredSuburb()
+            chosen_pref.dancer = dancer
+            chosen_pref.suburb = suburb
+            chosen_pref.save()
+        return HttpResponseRedirect("/profile_ajax/")
 
 def img_upload(request):
     if request.POST:
@@ -522,4 +546,3 @@ def img_upload(request):
     template = loader.get_template('upload.html')
     context = RequestContext(request, {})
     return HttpResponse(template.render(context))
-

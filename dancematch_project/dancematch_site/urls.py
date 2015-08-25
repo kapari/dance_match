@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^profile_ajax/$', views.profile_ajax, name='profile_ajax'),
     url(r'^update_pref/$', views.update_pref, name='update_pref'),
     url(r'^update_profile/$', views.update_profile, name='update_profile'),
+    url(r'^update_suburb/$', views.update_suburb, name='update_suburb'),
     # Login
     url(r'^login/$', views.login_view, name='login'),
     url(r'^register/$', views.register_view, name='register'),

@@ -76,14 +76,15 @@ function drawUserSuburbs() {
 
         // populate ul with corresponding suburb li
         var suburb = document.createElement("li");
-        suburb.setAttribute('data-id', current_suburb["id"]);
+        suburb.setAttribute('data-id', current_suburb["sub_id"]);
 
         // Create labels and checkboxes
         var label = document.createElement("label");
-        label.setAttribute("for", current_suburb.id);
+        label.setAttribute("for", current_suburb.sub_id);
+        label.innerText = current_suburb["sub_name"];
         var checkbox = document.createElement("input");
         checkbox.setAttribute("type", "checkbox");
-        checkbox.setAttribute("name", current_suburb.id);
+        checkbox.setAttribute("name", current_suburb.sub_id);
 
         // Check box if user selected
         if (current_suburb.selected) {
@@ -95,7 +96,7 @@ function drawUserSuburbs() {
 
         suburb.appendChild(checkbox);
         suburb.appendChild(label);
-        suburb.innerHTML += current_suburb["sub_name"];
+        // suburb.innerHTML += current_suburb["sub_name"];
 
         var current_hub = hub_ids[current_hub_id];
         current_hub.appendChild(suburb);
@@ -103,27 +104,7 @@ function drawUserSuburbs() {
     // drawSubLists(suburb_div, data);
     // drawSuburbChooser();
     addSuburbToggleListener();
-}
-
-function toggleEditSuburbs() {
-    var location_div = document.getElementById("suburbs");
-    var toggle_button = location_div.getElementsByClassName("suburb_toggle")[0];
-    toggle_button.classList.toggle("edit_view");
-    if (toggle_button.classList.contains("edit_view")) {
-        toggle_button.innerText = "Save Locations";
-    } else {
-        toggle_button.innerText = "Edit Locations";
-    }
-
-    var sub_list = document.getElementById("suburb_list");
-    sub_list.classList.toggle("read");
-
-    var all_suburbs = sub_list.getElementsByTagName("li");
-    for (var i = 0; i < all_suburbs.length; i++) {
-        if (!(all_suburbs[i].classList.contains("checked"))) {
-            all_suburbs[i].classList.toggle("hide");
-        }
-    }
+    addSuburbUpdateListeners(suburb_div);
 }
 
 function getHubIDs(hubs) {
@@ -183,14 +164,59 @@ function addProfileListeners() {
     }
 }
 
+function toggleEditSuburbs() {
+    var location_div = document.getElementById("suburbs");
+    var toggle_button = location_div.getElementsByClassName("suburb_toggle")[0];
+    toggle_button.classList.toggle("edit_view");
+    if (toggle_button.classList.contains("edit_view")) {
+        toggle_button.innerText = "Save Locations";
+    } else {
+        toggle_button.innerText = "Edit Locations";
+    }
+
+    var sub_list = document.getElementById("suburb_list");
+    sub_list.classList.toggle("read");
+
+    var all_suburbs = sub_list.getElementsByTagName("li");
+    for (var i = 0; i < all_suburbs.length; i++) {
+        if (!(all_suburbs[i].classList.contains("checked"))) {
+            all_suburbs[i].classList.toggle("hide");
+        }
+    }
+}
+
 function addSuburbToggleListener() {
     var location_div = document.getElementById("suburbs");
     var toggle_button = location_div.getElementsByClassName("suburb_toggle")[0];
     toggle_button.addEventListener("click", toggleEditSuburbs);
 }
 
-//TODO add listeners on suburb lis
+function onSuburbUpdate(e) {
+    var suburb_id = e.target.name;
+    var suburb_li = e.target.parentElement;
+    var action = "NONE";
 
+    suburb_li.classList.toggle("checked");
+    if (suburb_li.classList.contains("checked")) {
+        action = "SAVE";
+    } else {
+        action = "DELETE";
+    }
+    var update = {"user_id": DM.user_id,
+                  "sub_id": suburb_id,
+                  "action": action};
+    console.log(update);
+    sendPost(update, "/update_suburb/");
+}
+
+//TODO add listeners on suburb lis
+function addSuburbUpdateListeners(parent) {
+    var suburb_checkboxes = parent.getElementsByTagName("input");
+    for (var i = 0; i < suburb_checkboxes.length; i++) {
+        var current_checkbox = suburb_checkboxes[i];
+        current_checkbox.addEventListener("change", onSuburbUpdate);
+    }
+}
 
 // ===== DRAW USER DANCE PREFS ========================
 
