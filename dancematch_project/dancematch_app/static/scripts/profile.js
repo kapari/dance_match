@@ -300,7 +300,8 @@ function updateReadOnly(value, model) {
 // ===== CREATE/UPDATE PREF ===========================
 
 function onPrefUpdate(e) {
-    var group_div = e.target.parentElement;
+    var group_div = e.target.parentElement.parentElement;
+    // var group_div = e.target.parentElement; // if not nested inside label
     var pref_id_div = group_div.parentElement;
     var pref_id = pref_id_div.getAttribute("data-id");
 
@@ -346,6 +347,11 @@ function onPrefUpdate(e) {
         pref_id_div.getElementsByClassName("notes")[0].innerText = value;
     }
 
+    var keys = Object.keys(update);
+    for (var i=0; i < keys.length; i++) {
+        var key = keys[i];
+        console.log("update: key = " + keys[i] + "; value = " + update[key]);
+    }
     sendPost(update, "/update_pref/");
 }
 

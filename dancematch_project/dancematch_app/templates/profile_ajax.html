@@ -6,11 +6,12 @@
 <!-- PROFILE VIEW =========================== -->
 
 <section id="profile_content" class="view">
+    <h1 class="hide">My Profile</h1>
 
     <div id="profile">
         <div class="read">
             <img src="" class="profile_img">
-            <h1 id="dancer_name"></h1>
+            <h2 id="dancer_name"></h2>
             <p class="username"></p>
             <!--<p class="first_name"></p>-->
             <!--<p class="last_name"></p>-->
@@ -28,29 +29,13 @@
             <button class="edit_toggle">Edit</button>
         </div>
     </div>
-    <div id="suburbs">
-        <h2>
-            Where I Would Travel
-        </h2>
-        <button class="suburb_toggle">Edit Preferred Locations</button>
-        <div id="suburb_list" class="read">
-        </div>
-    </div>
-    <!--<div id="venues">-->
-        <!--<h2>-->
-            <!--Venues I attend-->
-        <!--</h2>-->
-        <!--<div id="venue_list">-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <h2>My Dances</h2>
-
-    <a href="/edit/{{ user.id }}/0/">Add a new dance</a>
-
-    <button class="new_pref_btn">Add a new dance</button>
 
     <div id="pref_list">
+        <h2>My Dances</h2>
+
+        <a href="/edit/{{ user.id }}/0/">Add a new dance</a>
+        <button class="new_pref_btn hide">Add a new dance</button>
+
         <ul class="pref">
             <li class="selected template">
                 <div class="read">
@@ -103,13 +88,29 @@
         </ul>
     </div>
 
-    <!--TODO: Move new pref li into pref list? Fix db posting. Hide and show on btn click.-->
+    <!--TODO: Move new pref li into pref list. Fix db posting. Hide and show on btn click.-->
     <div id="new_pref">
         <div class="btn_div">
             <button class="save_pref">Save</button>
             <button class="cancel_pref">Cancel</button>
         </div>
     </div>
+
+    <div id="suburbs">
+        <h2>
+            Where I Would Travel
+        </h2>
+        <button class="suburb_toggle">Edit Preferred Locations</button>
+        <div id="suburb_list" class="read">
+        </div>
+    </div>
+    <!--<div id="venues">-->
+        <!--<h2>-->
+            <!--Venues I attend-->
+        <!--</h2>-->
+        <!--<div id="venue_list">-->
+        <!--</div>-->
+    <!--</div>-->
 </section>
 
 <!-- END PROFILE VIEW ======================= -->
@@ -118,10 +119,8 @@
 <!-- SEARCH RESULTS VIEW ==================== -->
 
 <section id="search_content" class="view">
+    <h1>Find a Partner</h1>
     <div id="search_fields">
-        <h1>
-            Find a partner:
-        </h1>
         <label>
             Dance Style:
             <select class="search_field dance_list">Dance Style</select>

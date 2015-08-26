@@ -271,7 +271,9 @@ def api_suburbs(request):
     suburbs = Suburb.objects.all()
     output = []
     for suburb in suburbs:
-        output.append({"name": suburb.name, "id": suburb.id, "hub_name": suburb.hub.name})
+        output.append({"name": suburb.name,
+                       "id": suburb.id,
+                       "hub_name": suburb.hub.name})
     return HttpResponse(json.dumps(output, indent=4), content_type='application/json')
 
 def api_app_status(request):
@@ -414,7 +416,7 @@ def api_app_status(request):
 
 
 @login_required(login_url='/login/')
-def profile_ajax(request):
+def main(request):
     print(request.user.id)
     template = loader.get_template('profile_ajax.html')
     context = RequestContext(request, {})
@@ -438,14 +440,6 @@ def update_profile(request):
         dancer.save()
 
         return HttpResponseRedirect("/main/")
-
-# TODO finish
-@csrf_exempt
-def update_suburbs(request):
-    if request.POST:
-        print(request.POST)
-        user_id = int(request.POST.get("user_id"))
-        user = get_object_or_404(User, id=user_id)
 
 @csrf_exempt
 def update_pref(request):
