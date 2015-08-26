@@ -1,0 +1,104 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <h1>{{ dancer.name }}</h1>
+
+    <div class="prefs">
+
+        {% if dance_pref.id %}
+            <h3>Edit {{ dance_pref.dance }}: {{ dance_pref.role }}</h3>
+        {% else %}
+            <h3>Add a New Dance</h3>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <label>
+                Dance Style:
+                <select name="dance">
+                    <option value="">(required)</option>
+
+                    {% for dance in dances %}
+                        <option value="{{ dance.id }}"
+                            {% if dance.name == dance_pref.dance.name %}
+                                selected="selected"
+                            {% endif %}>
+                            {{ dance.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Role:
+                <select name="role">
+                    <option value="">(required)</option>
+
+                    {% for role in roles %}
+                        <option value="{{ role.id }}"
+                            {% if role.name == dance_pref.role.name %}
+                                selected="selected"
+                            {% endif %}>
+                            {{ role.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Skill Level:
+                <select name="skill_level">
+                    <option value="">(optional)</option>
+
+                    {% for level in skill_levels %}
+                        <option value="{{ level.id }}" name="skill_level"
+                            {% if level.name == dance_pref.skill_level.name %}
+                                selected="selected"
+                            {% endif %}>
+                            {{ level.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Status:
+                <select name="activity">
+                    <option value="">(optional)</option>
+                    {% for activity in activities %}
+                        <option value="{{ activity.id }}" name="activity"
+                            {% if activity.name == dance_pref.activity.name %}
+                                selected="selected"
+                            {% endif %}>
+                            {{ activity.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Goal:
+                <select name="goal">
+                    <option value="">(optional)</option>
+                    {% for goal in goals %}
+                        <option value="{{ goal.id }}" name="goal"
+                            {% if goal.name == dance_pref.goal.name %}
+                                selected="selected"
+                            {% endif %}>
+                            {{ goal.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Notes / What I'd like to work on:
+                <textarea name="notes">{{ dance_pref.notes }}</textarea>
+            </label>
+            <input type="submit" value="SAVE"/>
+
+        </form>
+
+    </div>
+
+    <a href="/profile_ajax/">Go Back to Profile</a>
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+{% endblock %}
