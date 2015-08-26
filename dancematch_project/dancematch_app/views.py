@@ -32,7 +32,7 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect("/profile_ajax/")
+                return HttpResponseRedirect("/main/")
 
     return render(request, 'login.html', {})
 
@@ -75,7 +75,7 @@ def dances(request):
     })
     return HttpResponse(template.render(context))
 
-
+# Not in use?
 def edit_profile(request, dancer_id):
     dancer = get_object_or_404(Dancer, pk=dancer_id)
     dance_prefs = DancePrefs.objects.filter(dancer=dancer)
@@ -133,7 +133,7 @@ def edit_dance(request, user_id, dance_pref_id):
         dance_pref.dancer = dancer
         dance_pref.save()
 
-        return HttpResponseRedirect("/profile_ajax/")
+        return HttpResponseRedirect("/main/")
 
     return render(request, 'edit_dance.html', {'dancer': dancer,
                                                'dance_pref': dance_pref,
@@ -437,7 +437,7 @@ def update_profile(request):
         user.save()
         dancer.save()
 
-        return HttpResponseRedirect("/profile_ajax/")
+        return HttpResponseRedirect("/main/")
 
 # TODO finish
 @csrf_exempt
@@ -500,7 +500,7 @@ def update_pref(request):
 
             dance_pref.save()
 
-        return HttpResponseRedirect("/profile_ajax/")
+        return HttpResponseRedirect("/main/")
 
 @csrf_exempt
 def update_suburb(request):
@@ -525,7 +525,7 @@ def update_suburb(request):
             chosen_pref.dancer = dancer
             chosen_pref.suburb = suburb
             chosen_pref.save()
-        return HttpResponseRedirect("/profile_ajax/")
+        return HttpResponseRedirect("/main/")
 
 def img_upload(request):
     if request.POST:
@@ -542,7 +542,7 @@ def img_upload(request):
         dancer.img_path = path
         dancer.save()
 
-        return HttpResponseRedirect("/profile_ajax/")
+        return HttpResponseRedirect("/main/")
 
     template = loader.get_template('upload.html')
     context = RequestContext(request, {})
